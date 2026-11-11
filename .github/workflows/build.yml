@@ -49,7 +49,7 @@ jobs:
           name: Locket-x-HPB-Windows
           path: |
             release/*.exe
-            release/*.yml
+            release/latest.yml
             release/*.blockmap
           if-no-files-found: error
       - uses: actions/upload-artifact@v4
@@ -65,5 +65,5 @@ jobs:
         run: |
           $version = node -p "require('./package.json').version"
           if ($env:GITHUB_REF_NAME -ne "v$version") { throw 'Tag must match package.json version' }
-          $files = Get-ChildItem release -File | Where-Object { $_.Extension -in '.exe', '.yml', '.blockmap' }
+          $files = Get-ChildItem release -File | Where-Object { $_.Extension -in '.exe', '.blockmap' -or $_.Name -eq 'latest.yml' }
           gh release create $env:GITHUB_REF_NAME $files.FullName --repo $env:GITHUB_REPOSITORY --title "Locket x HPB $version" --notes-file docs/release-notes.md
