@@ -1,0 +1,81 @@
+{
+  "name": "locket-x-hpb",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Locket x HPB — nhật ký ảnh và video cá nhân trên laptop",
+  "author": "hpb282",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hpb282/LocketV2.git"
+  },
+  "type": "module",
+  "main": "electron/main.cjs",
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "dev:web": "vite --host 127.0.0.1",
+    "build": "tsc --noEmit && vite build",
+    "start": "electron .",
+    "test": "node --test tests/*.test.cjs",
+    "test:ui": "playwright test",
+    "dist:win": "npm run build && electron-builder --win nsis --publish never"
+  },
+  "dependencies": {
+    "electron-updater": "6.8.11",
+    "fix-webm-duration": "^1.0.6",
+    "lucide-react": "1.72.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.65.0",
+    "@types/node": "^24.0.0",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "6.3.0",
+    "electron": "45.3.0",
+    "electron-builder": "26.18.0",
+    "typescript": "7.0.2",
+    "vite": "8.3.8"
+  },
+  "build": {
+    "appId": "dev.hpb282.locketv2",
+    "productName": "Locket x HPB",
+    "asar": true,
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "deleteAppDataOnUninstall": false
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "hpb282",
+        "repo": "LocketV2",
+        "releaseType": "release"
+      }
+    ],
+    "artifactName": "Locket-x-HPB-${version}-Windows-Setup.${ext}"
+  }
+}
