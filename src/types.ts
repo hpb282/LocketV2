@@ -38,9 +38,18 @@ export type Settings = {
   alwaysOnTop: boolean;
   mirror: boolean;
 };
+export type PersonalProfile = {
+  displayName: string;
+  nickname: string;
+  birthday: string;
+  bio: string;
+  location: string;
+  avatarId: string | null;
+};
 export type Snapshot = {
   items: Item[];
   settings: Settings;
+  profile: PersonalProfile;
   version: string;
   desktop: boolean;
   recovered?: boolean;
@@ -85,4 +94,12 @@ export const defaultSettings: Settings = {
   gridSize: 180,
   alwaysOnTop: true,
   mirror: true,
+};
+export const defaultProfile: PersonalProfile = {
+  displayName: "Bạn",
+  nickname: "",
+  birthday: "",
+  bio: "",
+  location: "",
+  avatarId: null,
 };

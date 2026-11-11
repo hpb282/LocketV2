@@ -1402,6 +1402,366 @@ small {
   background: var(--swatch);
   color: #20232b;
 }
+.profile-nav {
+  width: 62px;
+  padding: 0;
+  margin-bottom: 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 51px;
+  height: 51px;
+  border: 2px solid var(--accent);
+  border-radius: 50%;
+  padding: 3px;
+  background: var(--panel2);
+  color: var(--accent);
+  overflow: hidden;
+  transition: box-shadow 0.15s;
+}
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+.avatar.large {
+  width: 136px;
+  height: 136px;
+  padding: 5px;
+  margin-bottom: 22px;
+  box-shadow: 0 0 28px rgb(var(--neon-rgb) / 0.13);
+}
+.profile-nav.active .avatar,
+.profile-nav:hover .avatar {
+  box-shadow:
+    0 0 0 3px rgb(var(--neon-rgb) / 0.15),
+    0 0 20px rgb(var(--neon-rgb) / 0.22);
+}
+.profile-nav-name {
+  display: block;
+  max-width: 62px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--muted);
+}
+.profile-layout {
+  display: grid;
+  grid-template-columns: 270px minmax(0, 1fr);
+  align-items: start;
+  gap: 24px;
+}
+.profile-summary {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  padding: 30px 23px;
+  text-align: center;
+}
+.profile-summary h2 {
+  font-size: 26px;
+  margin: 25px 0 8px;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+.profile-summary p {
+  margin-bottom: 10px;
+  overflow-wrap: anywhere;
+  max-width: 100%;
+}
+.profile-summary .profile-bio {
+  color: var(--text);
+  font-size: 13px;
+  white-space: pre-wrap;
+}
+.profile-detail {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.remove-avatar {
+  margin-top: 12px;
+  font-size: 11px;
+  color: var(--muted);
+}
+.profile-stats {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+.profile-stats > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.profile-stats svg {
+  color: var(--muted);
+}
+.profile-stats strong {
+  font-size: 22px;
+  font-weight: 600;
+}
+.profile-stats span {
+  font-size: 10px;
+  color: var(--muted);
+}
+.profile-form {
+  padding: 28px;
+}
+.profile-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px 20px;
+}
+.profile-fields input {
+  min-width: 0;
+  width: 100%;
+}
+.profile-bio-field {
+  grid-column: span 2;
+}
+.profile-save {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 22px;
+}
+.memories-page {
+  max-width: 1450px;
+}
+.month-picker {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 13px;
+  border: 1px solid var(--border);
+  border-radius: 23px;
+  background: var(--panel);
+  color: var(--muted);
+}
+.month-picker input {
+  min-width: 0;
+  width: 127px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  font-size: 12px;
+}
+.memories-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: 24px;
+}
+.memories-layout.with-day {
+  grid-template-columns: minmax(0, 1fr) 265px;
+}
+.memory-months {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 330px), 1fr));
+  align-items: start;
+  gap: 24px;
+}
+.month-card {
+  border-radius: 24px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  overflow: hidden;
+}
+.month-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 18px 20px;
+  background: var(--panel2);
+}
+.month-heading h2 {
+  font-size: 17px;
+  margin: 0;
+}
+.month-heading > span {
+  font-size: 10px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.calendar-weekdays,
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 7px;
+  padding: 0 18px;
+}
+.calendar-weekdays {
+  padding-top: 17px;
+  padding-bottom: 12px;
+  font-size: 10px;
+  color: var(--muted);
+  text-align: center;
+}
+.calendar-grid {
+  padding-bottom: 19px;
+}
+.calendar-day,
+.calendar-spacer {
+  min-width: 0;
+  aspect-ratio: 1;
+}
+.calendar-day {
+  position: relative;
+  border-radius: 12px;
+  padding: 0;
+  border: 1px solid transparent;
+  background: transparent;
+  overflow: hidden;
+}
+.calendar-day.empty-day {
+  opacity: 1;
+  cursor: default;
+}
+.calendar-number {
+  position: absolute;
+  top: 5px;
+  left: 6px;
+  font-size: 10px;
+  color: var(--muted);
+  line-height: 1.2;
+}
+.calendar-dot {
+  display: block;
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  left: 50%;
+  top: 62%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: var(--border);
+}
+.has-moments .calendar-number {
+  background: #171817b3;
+  color: #fff;
+  padding: 2px 4px;
+  border-radius: 5px;
+  top: 3px;
+  left: 3px;
+}
+.calendar-day.today {
+  border-color: rgb(var(--neon-rgb) / 0.5);
+}
+.calendar-day.today .calendar-number {
+  color: var(--accent);
+}
+.calendar-day.selected,
+.calendar-day.has-moments:hover {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+.calendar-count {
+  position: absolute;
+  bottom: 3px;
+  right: 3px;
+  min-width: 17px;
+  height: 17px;
+  display: grid;
+  place-items: center;
+  padding: 0 3px;
+  border-radius: 6px;
+  background: var(--accent);
+  color: var(--ink);
+  font-size: 10px;
+  font-weight: 700;
+}
+.calendar-video {
+  position: absolute;
+  bottom: 4px;
+  left: 4px;
+  color: #fff;
+  filter: drop-shadow(0 1px 2px #000);
+}
+.memory-day-panel {
+  position: sticky;
+  top: 24px;
+  padding: 18px;
+  max-height: calc(100vh - 90px);
+  overflow-y: auto;
+}
+.memory-day-panel .panel-heading {
+  margin-bottom: 20px;
+  gap: 10px;
+}
+.memory-day-panel h3 {
+  font-size: 17px;
+  margin-bottom: 5px;
+}
+.memory-day-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.memory-day-photo {
+  position: relative;
+  padding: 0;
+  min-width: 0;
+  border-radius: 13px;
+  overflow: hidden;
+}
+.memory-day-photo:hover {
+  outline: 2px solid var(--accent);
+}
+.load-months {
+  grid-column: 1 / -1;
+  justify-self: center;
+}
+@media (max-height: 700px) {
+  .nav-rail {
+    padding-top: 14px;
+    padding-bottom: 10px;
+  }
+  .profile-nav {
+    margin-bottom: 17px;
+    gap: 6px;
+  }
+  .nav-rail nav,
+  .nav-bottom {
+    gap: 9px;
+  }
+  .nav-button {
+    height: 46px;
+    width: 46px;
+  }
+  .profile-nav .avatar {
+    height: 47px;
+    width: 47px;
+  }
+}
+@media (max-width: 1050px) {
+  .profile-layout {
+    grid-template-columns: 230px minmax(0, 1fr);
+    gap: 18px;
+  }
+  .profile-form {
+    padding: 22px;
+  }
+  .memories-layout {
+    gap: 18px;
+  }
+}
 .about-card {
   grid-column: span 2;
   display: flex;

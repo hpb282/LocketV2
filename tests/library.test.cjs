@@ -153,3 +153,99 @@ test("palette selection survives restart and rejects unsupported values", async 
   assert.equal(reopened.snapshot().settings.palette, "pink");
   assert.equal(reopened.snapshot().settings.theme, "light");
 });
+
+test("a 0.2 library gains a local profile while retaining media and neon settings", async (t) => {
+  const { library, root } = await fixture(t);
+  await library.add(sample, Buffer.from("original"));
+  await library.settings({ palette: "blue" });
+  const file = path.join(root, "library.json");
+  const legacy = JSON.parse(await fs.readFile(file, "utf8"));
+  delete legacy.profile;
+  await fs.writeFile(file, JSON.stringify(legacy));
+  const reopened = await new Library(root).open();
+  assert.equal(reopened.snapshot().profile.displayName, "Bạn");
+  assert.equal(reopened.snapshot().profile.avatarId, null);
+  assert.equal(reopened.snapshot().settings.palette, "blue");
+  assert.deepEqual(reopened.snapshot().items, legacy.items);
+});
+
+test("personal profile persists unicode names and calendar birthday without touching media", async (t) => {
+  const { library, root } = await fixture(t);
+  await library.updateProfile({
+    displayName: "  hpb  ",
+    nickname: "Góc nhỏ",
+    birthday: "2000-02-29",
+    bio: "Một ngày bình yên",
+    location: "Hà Nội",
+    avatarId: "../outside",
+  });
+  const reopened = await new Library(root).open();
+  assert.deepEqual(reopened.snapshot().profile, {
+    displayName: "hpb",
+    nickname: "Góc nhỏ",
+    birthday: "2000-02-29",
+    bio: "Một ngày bình yên",
+    location: "Hà Nội",
+    avatarId: null,
+  });
+  assert.equal(reopened.snapshot().items.length, 0);
+});
+
+test("profile validates real birthdays and rejects future dates without corrupting saved data", async (t) => {
+  const { library } = await fixture(t);
+  await library.updateProfile({ displayName: "hpb", birthday: "2000-02-29" });
+  for (const patch of [
+    { birthday: "2023-02-29" },
+    { birthday: "2026-04-31" },
+    { birthday: "9999-12-31" },
+    { displayName: " " },
+    { bio: "x".repeat(161) },
+  ]) {
+    await assert.rejects(async () => library.updateProfile(patch));
+  }
+  assert.equal(library.snapshot().profile.displayName, "hpb");
+  assert.equal(library.snapshot().profile.birthday, "2000-02-29");
+});
+
+test("avatar replacement preserves the backup avatar, prunes older files and stays outside the gallery", async (t) => {
+  const { library, root } = await fixture(t);
+  const a = await library.setAvatar(Buffer.from("avatar a"));
+  const b = await library.setAvatar(Buffer.from("avatar b"));
+  const c = await library.setAvatar(Buffer.from("avatar c"));
+  const files = (await fs.readdir(path.join(root, "avatars"))).sort();
+  assert.deepEqual(files, [`${b.avatarId}.jpg`, `${c.avatarId}.jpg`].sort());
+  assert.throws(() => library.avatarPath(a.avatarId));
+  assert.throws(() => library.avatarPath("../secret"));
+  assert.equal(library.snapshot().items.length, 0);
+  await fs.writeFile(path.join(root, "library.json"), "{broken");
+  const recovered = await new Library(root).open();
+  assert.equal(recovered.snapshot().profile.avatarId, b.avatarId);
+  assert.equal(
+    (await fs.readFile(recovered.avatarPath(b.avatarId))).toString(),
+    "avatar b",
+  );
+  await recovered.setAvatar(null);
+  assert.equal(recovered.snapshot().profile.avatarId, null);
+});
+
+test("failed avatar metadata write keeps the original and removes the uncommitted file", async (t) => {
+  const { library, root } = await fixture(t);
+  const original = await library.setAvatar(Buffer.from("original avatar"));
+  const persist = library.persist.bind(library);
+  library.persist = async () => {
+    throw Error("disk full");
+  };
+  await assert.rejects(
+    library.setAvatar(Buffer.from("replacement avatar")),
+    /disk full/,
+  );
+  library.persist = persist;
+  assert.equal(library.snapshot().profile.avatarId, original.avatarId);
+  assert.deepEqual(await fs.readdir(path.join(root, "avatars")), [
+    `${original.avatarId}.jpg`,
+  ]);
+  assert.equal(
+    (await fs.readFile(library.avatarPath(original.avatarId))).toString(),
+    "original avatar",
+  );
+});

@@ -128,6 +128,50 @@ if (!app.requestSingleInstanceLock()) {
           version: app.getVersion(),
           desktop: true,
         };
+      case "profile:update": {
+        const profile = await library.updateProfile(payloadObject(payload));
+        broadcast();
+        return profile;
+      }
+      case "profile:avatar": {
+        const { canceled, filePaths } = await dialog.showOpenDialog(
+          mainWindow,
+          {
+            title: "Chọn ảnh đại diện",
+            properties: ["openFile"],
+            filters: [
+              { name: "Ảnh", extensions: ["jpg", "jpeg", "png", "webp"] },
+            ],
+          },
+        );
+        if (canceled) return null;
+        if ((await fs.stat(filePaths[0])).size > 25 * 1024 * 1024)
+          throw Error("Hãy chọn ảnh nhỏ hơn 25 MB.");
+        const image = nativeImage.createFromBuffer(
+          await fs.readFile(filePaths[0]),
+        );
+        if (image.isEmpty()) throw Error("Không đọc được ảnh đại diện.");
+        const { width, height } = image.getSize();
+        if (width * height > 24_000_000)
+          throw Error("Hãy chọn ảnh không quá 24 megapixel.");
+        const side = Math.min(width, height);
+        const avatar = image
+          .crop({
+            x: Math.floor((width - side) / 2),
+            y: Math.floor((height - side) / 2),
+            width: side,
+            height: side,
+          })
+          .resize({ width: 512, height: 512, quality: "best" });
+        const profile = await library.setAvatar(avatar.toJPEG(90));
+        broadcast();
+        return profile;
+      }
+      case "profile:avatar:clear": {
+        const profile = await library.setAvatar(null);
+        broadcast();
+        return profile;
+      }
       case "media:add": {
         const data = payloadObject(payload);
         const bytes = binary(data.bytes);
@@ -328,6 +372,19 @@ if (!app.requestSingleInstanceLock()) {
         try {
           const url = new URL(request.url);
           const id = url.pathname.slice(1);
+          if (url.host === "avatar" && /^[a-f0-9-]{36}$/.test(id)) {
+            const bytes = await fs.readFile(library.avatarPath(id));
+            return new Response(bytes, {
+              headers: {
+                "Content-Type": "image/jpeg",
+                "Content-Length": String(bytes.length),
+                "Cache-Control": "no-store",
+                "Access-Control-Allow-Origin": dev
+                  ? "http://127.0.0.1:5173"
+                  : "locket://app",
+              },
+            });
+          }
           if (url.host !== "item" || !/^[a-f0-9-]{36}$/.test(id))
             return new Response(null, { status: 404 });
           const item = library.item(id);

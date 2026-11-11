@@ -75,9 +75,15 @@ test("offline desktop capture, edit, export, favorite, restore, widget and video
       "data-palette",
       "blue",
     );
+    const widgetClosed = widget.waitForEvent("close");
     await widget
       .getByRole("button", { name: "Đóng ảnh ghim" })
-      .click({ noWaitAfter: true });
+      .click({ noWaitAfter: true })
+      .catch((error) => {
+        // A native window can close before Playwright receives the click acknowledgement.
+        if (!widget.isClosed()) throw error;
+      });
+    await widgetClosed;
     await expect.poll(() => app.windows().length).toBe(1);
     await page.getByRole("button", { name: "Quay về", exact: true }).click();
     await expect(
@@ -221,6 +227,161 @@ test("native import, light mode and neon palette persist across restart", async 
       page.getByRole("button", { name: "Mở Ảnh nhập từ laptop" }),
     ).toBeVisible();
     await page.screenshot({ path: "test-results/library-light.png" });
+  } finally {
+    await app.close();
+    await rm(profile, { recursive: true, force: true });
+  }
+});
+
+test("personal profile, avatar and daily memories work and survive restart", async () => {
+  const profile = await mkdtemp(join(tmpdir(), "hpb-profile-"));
+  const launch = () =>
+    electron.launch({
+      args: [
+        ".",
+        ...(process.platform === "linux"
+          ? ["--no-sandbox", "--ozone-platform=headless"]
+          : []),
+        "--use-fake-device-for-media-stream",
+        "--use-fake-ui-for-media-stream",
+      ],
+      env: { ...process.env, HPB_USER_DATA: profile, HPB_DEV: "0" },
+      timeout: 30000,
+    });
+  let app = await launch();
+  try {
+    let page = await app.firstWindow();
+    const errors: string[] = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    const mockPicker = async () =>
+      app.evaluate(({ dialog }, file) => {
+        dialog.showOpenDialog = async () => ({
+          canceled: false,
+          filePaths: [file],
+        });
+      }, resolve("public/icon.png"));
+    await mockPicker();
+    await page
+      .getByRole("button", { name: "Hồ sơ cá nhân", exact: true })
+      .click();
+    await page.getByLabel("Tên hiển thị", { exact: true }).fill("hpb");
+    await page.getByLabel("Biệt danh", { exact: true }).fill("Góc nhỏ");
+    await page.getByLabel("Ngày sinh", { exact: true }).fill("2000-02-29");
+    await page.getByLabel("Thành phố", { exact: true }).fill("Hà Nội");
+    await page
+      .getByLabel("Giới thiệu", { exact: true })
+      .fill("Một ngày bình yên");
+    await page
+      .getByRole("button", { name: "Đổi ảnh đại diện", exact: true })
+      .click();
+    await expect(page.locator(".profile-nav img")).toHaveAttribute(
+      "src",
+      /^media:\/\/avatar\//,
+    );
+    await expect(page.getByLabel("Tên hiển thị", { exact: true })).toHaveValue(
+      "hpb",
+    );
+    await page.getByRole("button", { name: "Lưu hồ sơ", exact: true }).click();
+    await expect(page.locator(".profile-nav-name")).toHaveText("hpb");
+    const saved = await page.evaluate(() => window.hpb!.invoke("snapshot"));
+    expect(saved.profile.birthday).toBe("2000-02-29");
+    expect(saved.items).toHaveLength(0);
+    const originalAvatar = saved.profile.avatarId;
+    await expect
+      .poll(() =>
+        page
+          .locator(".profile-summary .avatar img")
+          .evaluate((image: HTMLImageElement) => image.naturalWidth),
+      )
+      .toBe(512);
+    await page.screenshot({ path: "test-results/personal-profile.png" });
+    const addPhoto = async (caption: string) => {
+      await page
+        .getByRole("button", { name: "Chụp & quay", exact: true })
+        .click();
+      await page.getByRole("button", { name: "Chọn ảnh", exact: true }).click();
+      await expect(
+        page.getByRole("heading", { name: "Khoảnh khắc vừa chụp" }),
+      ).toBeVisible();
+      await page.getByRole("button", { name: "Sửa ghi chú trên ảnh" }).click();
+      await page.getByLabel("Ghi chú trên ảnh").fill(caption);
+      await page.getByLabel("Ghi chú trên ảnh").press("Enter");
+      await page
+        .getByRole("button", { name: "Lưu khoảnh khắc", exact: true })
+        .click();
+      await expect(
+        page.getByRole("heading", { name: "Một chút của hôm nay." }),
+      ).toBeVisible();
+    };
+    await addPhoto("Buổi sáng");
+    await addPhoto("Buổi tối");
+    const withPhotos = await page.evaluate(() =>
+      window.hpb!.invoke("snapshot"),
+    );
+    const date = new Date(withPhotos.items[0].createdAt);
+    const day = `${String(date.getDate()).padStart(2, "0")}/${String(date.getMonth() + 1).padStart(2, "0")}/${date.getFullYear()}`;
+    await page.getByRole("button", { name: "Kỷ niệm", exact: true }).click();
+    await expect(
+      page.getByRole("heading", {
+        name: `Tháng ${date.getMonth() + 1}, ${date.getFullYear()}`,
+        exact: true,
+      }),
+    ).toBeVisible();
+    await page
+      .getByRole("button", { name: `${day}, 2 khoảnh khắc`, exact: true })
+      .click();
+    const dayPanel = page.getByRole("complementary", {
+      name: `Khoảnh khắc ngày ${day}`,
+      exact: true,
+    });
+    await expect(dayPanel.getByRole("button", { name: /^Xem / })).toHaveCount(
+      2,
+    );
+    await expect(
+      page.locator(".calendar-day.empty-day").first(),
+    ).toBeDisabled();
+    await page.screenshot({ path: "test-results/memories-calendar.png" });
+    await dayPanel
+      .getByRole("button", { name: "Xem Buổi sáng", exact: true })
+      .click();
+    await expect(page.locator(".review-page img")).toHaveAttribute(
+      "alt",
+      "Buổi sáng",
+    );
+    await page.getByRole("button", { name: "Quay về", exact: true }).click();
+    await expect(dayPanel).toBeVisible();
+    await app.close();
+    app = await launch();
+    page = await app.firstWindow();
+    await page
+      .getByRole("button", { name: "Hồ sơ cá nhân", exact: true })
+      .click();
+    await expect(page.getByLabel("Tên hiển thị", { exact: true })).toHaveValue(
+      "hpb",
+    );
+    await expect(page.getByLabel("Ngày sinh", { exact: true })).toHaveValue(
+      "2000-02-29",
+    );
+    const reopened = await page.evaluate(() => window.hpb!.invoke("snapshot"));
+    expect(reopened.profile.avatarId).toBe(originalAvatar);
+    expect(reopened.items).toHaveLength(2);
+    await mockPicker();
+    await page
+      .getByRole("button", { name: "Đổi ảnh đại diện", exact: true })
+      .click();
+    await expect
+      .poll(
+        async () =>
+          (await page.evaluate(() => window.hpb!.invoke("snapshot"))).profile
+            .avatarId,
+      )
+      .not.toBe(originalAvatar);
+    await page
+      .getByRole("button", { name: "Gỡ ảnh đại diện", exact: true })
+      .click();
+    await expect(page.locator(".profile-nav img")).toHaveCount(0);
+    await expect(page.locator(".profile-nav-name")).toHaveText("hpb");
+    expect(errors).toEqual([]);
   } finally {
     await app.close();
     await rm(profile, { recursive: true, force: true });

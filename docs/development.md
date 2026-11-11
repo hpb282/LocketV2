@@ -6,6 +6,9 @@
 - `src/Review.tsx`, `src/Tools.tsx`: xem lại, ghi chú và công cụ trang trí.
 - `src/frames.ts`: renderer Canvas dùng chung khi xem và khi xuất ảnh.
 - `src/palettes.ts`: danh sách màu nền neon; giá trị màu được áp dụng qua CSS variables trong `styles.css` và `data-palette` trên cả cửa sổ chính lẫn cửa sổ ghim.
+- `src/Memories.tsx`, `src/calendar.ts`: lịch kỷ niệm và gom ngày theo múi giờ của laptop, bỏ qua khoảnh khắc trong thùng rác.
+- `src/Profile.tsx`, `src/Avatar.tsx`: chỉnh hồ sơ và avatar ở thanh bên.
+- `electron/profile.cjs`: kiểm tra dữ liệu hồ sơ và ngày sinh; ảnh đại diện được chọn/chuẩn hóa trong tiến trình chính.
 - `src/App.tsx`: thư viện, yêu thích, thùng rác, cài đặt và cửa sổ ghim.
 - `src/Updates.tsx`: giao diện cập nhật.
 - `electron/library.cjs`: lưu trữ, ghi nguyên tử, bản sao chỉ mục, phiên bản schema.
@@ -46,10 +49,13 @@ Thư mục mặc định trên Windows: `%APPDATA%\Locket x HPB\library`.
 - `library.json`: metadata ảnh/video, ghi chú, trang trí, cài đặt; `schemaVersion: 1`.
 - `library.json.bak`: bản sao chỉ mục gần nhất; khi file chính hỏng app thử khôi phục và báo cho người dùng.
 - `media/`: tệp ảnh/video riêng theo UUID. Trang trí và ghi chú không ghi đè lên ảnh gốc trong thư viện.
+- `avatars/`: avatar JPEG 512×512 theo UUID, tách khỏi ảnh/video. Khi đổi avatar, app giữ ảnh đang dùng và ảnh được chỉ mục sao lưu tham chiếu, dọn những avatar cũ hơn.
 
 Nút **Mở thư mục thư viện** cho phép sao lưu thủ công. Đóng app trước khi sao chép toàn bộ thư mục `library`; bản sao chỉ mục `.bak` không thay thế bản sao lưu toàn bộ thư viện. App không mã hóa ảnh trên đĩa. Cập nhật hoặc gỡ bản cài mặc định không xóa dữ liệu.
 
 Từ 0.2.0, `settings.palette` lưu màu nền (`yellow`, `blue`, `green`, `red`, `pink`, `purple`, `cyan`). Thư viện 0.1.0 thiếu khóa này sẽ nhận mặc định `yellow`, giữ các cài đặt và khoảnh khắc hiện có; schema vẫn tương thích phiên bản 1.
+
+Từ 0.3.0, `profile` lưu `displayName`, `nickname`, `birthday` (ngày lịch `YYYY-MM-DD`, không chuyển sang UTC), `bio`, `location`, `avatarId`. Thư viện cũ thiếu hồ sơ sẽ nhận hồ sơ trống với tên mặc định “Bạn”, giữ nguyên ảnh/video và cài đặt. Avatar chỉ truy cập qua `media://avatar/<id>` khi id khớp ảnh hiện tại. Các action hồ sơ chỉ cho cửa sổ chính gọi. Toàn bộ dữ liệu vẫn ở thư mục `library` hiện có.
 
 Để kiểm thử cô lập, dùng `HPB_USER_DATA` trỏ tới thư mục tạm. Không dùng thư viện thật để chạy test. Renderer dùng context isolation, sandbox và CSP; không có Node.js API. Các tệp app/media chỉ được phục vụ qua giao thức với đường dẫn đã xác thực.
 

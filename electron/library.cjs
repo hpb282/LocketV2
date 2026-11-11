@@ -1,6 +1,11 @@
 const fs = require("node:fs/promises");
 const path = require("node:path");
 const { randomUUID } = require("node:crypto");
+const {
+  DEFAULT_PROFILE,
+  profileOf,
+  validateProfilePatch,
+} = require("./profile.cjs");
 const FRAMES = [
   "none",
   "halloween",
@@ -71,7 +76,7 @@ function migrateDocument(data) {
   }
   const settings = { ...DEFAULT_SETTINGS, ...data.settings };
   if (!PALETTES.includes(settings.palette)) settings.palette = "yellow";
-  return { ...data, settings };
+  return { ...data, settings, profile: profileOf(data.profile) };
 }
 class Library {
   constructor(root) {
@@ -83,6 +88,7 @@ class Library {
   }
   async open() {
     await fs.mkdir(path.join(this.root, "media"), { recursive: true });
+    await fs.mkdir(path.join(this.root, "avatars"), { recursive: true });
     try {
       this.doc = migrateDocument(
         JSON.parse(await fs.readFile(this.file, "utf8")),
@@ -102,6 +108,7 @@ class Library {
             schemaVersion: 1,
             items: [],
             settings: { ...DEFAULT_SETTINGS },
+            profile: { ...DEFAULT_PROFILE },
           };
         }
       } else {
@@ -120,6 +127,7 @@ class Library {
         .rename(this.file, `${this.file}.damaged-${Date.now()}`)
         .catch(() => {});
     await this.persist(this.doc);
+    await this.pruneAvatars();
     return this;
   }
   async persist(doc) {
@@ -155,6 +163,7 @@ class Library {
     return structuredClone({
       items: this.doc.items,
       settings: this.doc.settings,
+      profile: this.doc.profile,
       recovered: this.recovered,
     });
   }
@@ -166,6 +175,66 @@ class Library {
   mediaPath(id) {
     const item = this.item(id);
     return path.join(this.root, "media", `${item.id}.${item.ext}`);
+  }
+  avatarPath(id) {
+    if (
+      typeof id !== "string" ||
+      !/^[a-f0-9-]{36}$/.test(id) ||
+      this.doc.profile.avatarId !== id
+    )
+      throw Error("Không tìm thấy ảnh đại diện.");
+    return path.join(this.root, "avatars", `${id}.jpg`);
+  }
+  updateProfile(patch) {
+    const changes = validateProfilePatch(patch);
+    return this.transact((doc) => {
+      doc.profile = { ...doc.profile, ...changes };
+      return structuredClone(doc.profile);
+    });
+  }
+  async setAvatar(bytes) {
+    if (
+      bytes !== null &&
+      (!Buffer.isBuffer(bytes) || !bytes.length || bytes.length > 1024 * 1024)
+    )
+      throw Error("Ảnh đại diện không hợp lệ hoặc vượt quá 1 MB.");
+    const id = bytes === null ? null : randomUUID();
+    const file = id ? path.join(this.root, "avatars", `${id}.jpg`) : null;
+    let profile;
+    try {
+      profile = await this.transact(async (doc) => {
+        if (file) await fs.writeFile(file, bytes, { flag: "wx", mode: 0o600 });
+        doc.profile.avatarId = id;
+        return structuredClone(doc.profile);
+      });
+    } catch (error) {
+      if (file) await fs.unlink(file).catch(() => {});
+      throw error;
+    }
+    await this.pruneAvatars();
+    return profile;
+  }
+  pruneAvatars() {
+    const task = this.queue.then(async () => {
+      const keep = new Set([this.doc.profile.avatarId]);
+      try {
+        const backup = JSON.parse(
+          await fs.readFile(`${this.file}.bak`, "utf8"),
+        );
+        keep.add(backup.profile?.avatarId);
+      } catch (error) {
+        if (error.code !== "ENOENT") return;
+      }
+      for (const name of await fs.readdir(path.join(this.root, "avatars"))) {
+        if (/^[a-f0-9-]{36}\.jpg$/.test(name) && !keep.has(name.slice(0, -4))) {
+          await fs
+            .unlink(path.join(this.root, "avatars", name))
+            .catch(() => {});
+        }
+      }
+    });
+    this.queue = task.catch(() => {});
+    return task;
   }
   async add(input, bytes) {
     if (

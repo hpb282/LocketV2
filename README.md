@@ -20,6 +20,8 @@ Repo hiện riêng tư, người tải cần được cấp quyền truy cập. 
 - Khung Halloween, Giáng sinh, Tết, sinh nhật, Polaroid; hiệu ứng chữ, màu và cỡ chữ.
 - Bảng công cụ trang trí bên phải có thể mở rộng/thu gọn.
 - Lưới ảnh/video, tìm ghi chú, lọc loại/tháng, yêu thích, chỉnh kích thước lưới.
+- **Kỷ niệm:** lịch theo tháng/ngày với ảnh đại diện từng ngày và số lượng ảnh/video; bấm ngày để xem lại.
+- **Hồ sơ cá nhân:** bấm avatar ở đầu thanh bên trái để sửa tên, biệt danh, ngày sinh, giới thiệu, thành phố và đổi ảnh đại diện.
 - Xem lớn, phím ← → chuyển khoảnh khắc, Esc về thư viện.
 - Xuất ảnh PNG có ghi chú và khung; xuất video WebM gốc.
 - Cửa sổ ảnh/video ghim, đổi kích thước, chuyển khoảnh khắc, luôn nổi tùy chọn.
@@ -55,3 +57,5 @@ Nút **Cập nhật** nằm ở thanh bên trái, đồng thời có trong **Cà
 Xem [hướng dẫn phát triển, dữ liệu và phát hành](docs/development.md) để thêm tính năng và tạo bản cập nhật bằng tag phiên bản. Hosting và đồng bộ đám mây được dành cho giai đoạn sau.
 
 Bản **0.2.0** bỏ phần chữ giới thiệu trên màn hình chụp, thêm các màu nền neon nhẹ và giữ nguyên thư viện của bản 0.1.0 khi cập nhật.
+
+Bản **0.3.0** thêm lịch Kỷ niệm và hồ sơ cá nhân, thay nút HPB trong thanh bên bằng avatar có thể đổi. Hồ sơ được lưu riêng trong thư viện cục bộ; avatar không được tính là ảnh chụp và không xuất hiện trong lịch.

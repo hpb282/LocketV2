@@ -1,4 +1,4 @@
-import { defaultSettings, type Snapshot } from "./types";
+import { defaultSettings, defaultProfile, type Snapshot } from "./types";
 export async function invoke<T = any>(
   action: string,
   payload?: unknown,
@@ -8,7 +8,8 @@ export async function invoke<T = any>(
     return {
       items: [],
       settings: defaultSettings,
-      version: "0.2.0",
+      profile: defaultProfile,
+      version: "0.3.0",
       desktop: false,
     } as T;
   throw Error("Hãy mở bản desktop Locket x HPB để dùng chức năng này.");

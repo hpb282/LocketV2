@@ -32,10 +32,12 @@ import {
   Heart,
   Download,
   Palette,
+  CalendarDays,
 } from "lucide-react";
 import { invoke, mediaURL, snapshot, formatDuration } from "./api";
 import {
   defaultSettings,
+  defaultProfile,
   type Draft,
   type Item,
   type Settings,
@@ -47,10 +49,16 @@ import { MediaSurface } from "./MediaSurface";
 import { Review } from "./Review";
 import { Updates } from "./Updates";
 import { palettes } from "./palettes";
+import { Avatar } from "./Avatar";
+import { Profile } from "./Profile";
+import { Memories } from "./Memories";
+import { localDayKey } from "./calendar";
 
 type Page =
   | "camera"
   | "gallery"
+  | "memories"
+  | "profile"
   | "favorites"
   | "trash"
   | "settings"
@@ -158,11 +166,13 @@ function MainApp() {
   const [data, setData] = useState<Snapshot>({
       items: [],
       settings: defaultSettings,
-      version: "0.2.0",
+      profile: defaultProfile,
+      version: "0.3.0",
       desktop: true,
     }),
     [page, setPage] = useState<Page>("camera"),
     [selected, setSelected] = useState<string | null>(null),
+    [memoryDay, setMemoryDay] = useState<string | null>(null),
     [search, setSearch] = useState(""),
     [kind, setKind] = useState("all"),
     [month, setMonth] = useState(false),
@@ -261,9 +271,15 @@ function MainApp() {
       notify(`Đã chuyển ${ids.length} khoảnh khắc vào thùng rác.`);
     });
   const step = (delta: number) => {
-    const index = active.findIndex((item) => item.id === selected);
-    if (active.length)
-      setSelected(active[(index + delta + active.length) % active.length].id);
+    const browsing =
+      page === "memories" && memoryDay
+        ? active.filter((item) => localDayKey(item.createdAt) === memoryDay)
+        : active;
+    const index = browsing.findIndex((item) => item.id === selected);
+    if (browsing.length)
+      setSelected(
+        browsing[(index + delta + browsing.length) % browsing.length].id,
+      );
   };
   const title =
     page === "trash"
@@ -275,18 +291,20 @@ function MainApp() {
     <div className="app-shell">
       <aside className="nav-rail">
         <button
-          className="brand"
-          title="Locket x HPB"
-          onClick={() => navigate("camera")}
+          className={`profile-nav ${page === "profile" ? "active" : ""}`}
+          title="Hồ sơ cá nhân"
+          aria-label="Hồ sơ cá nhân"
+          onClick={() => navigate("profile")}
         >
-          <img src="./icon.png" alt="" />
-          <span>HPB</span>
+          <Avatar profile={data.profile} />
+          <span className="profile-nav-name">{data.profile.displayName}</span>
         </button>
         <nav>
           {(
             [
               { id: "camera", icon: Camera, label: "Chụp & quay" },
               { id: "gallery", icon: Images, label: "Tất cả ảnh & video" },
+              { id: "memories", icon: CalendarDays, label: "Kỷ niệm" },
               { id: "favorites", icon: Star, label: "Yêu thích" },
             ] as const
           ).map((link) => (
@@ -540,6 +558,8 @@ function MainApp() {
               </div>
             </div>
           </section>
+        ) : page === "profile" ? (
+          <Profile profile={data.profile} items={active} notify={notify} />
         ) : page === "updates" ? (
           <Updates version={data.version} notify={notify} />
         ) : selectedItem ? (
@@ -559,6 +579,13 @@ function MainApp() {
             }}
             onFavorite={() => void favorite(selectedItem)}
             onTrash={() => void trash([selectedItem.id])}
+          />
+        ) : page === "memories" ? (
+          <Memories
+            items={active}
+            selectedDay={memoryDay}
+            onDaySelect={setMemoryDay}
+            onSelect={setSelected}
           />
         ) : (
           <section className="page gallery-page">
