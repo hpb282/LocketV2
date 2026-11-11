@@ -10,6 +10,7 @@ const FRAMES = [
   "polaroid",
 ];
 const FONTS = ["basic", "hand", "bold", "neon"];
+const PALETTES = ["yellow", "blue", "green", "red", "pink", "purple", "cyan"];
 const DEFAULT_STYLE = {
   frame: "none",
   thickness: 3,
@@ -21,6 +22,7 @@ const DEFAULT_STYLE = {
 };
 const DEFAULT_SETTINGS = {
   theme: "system",
+  palette: "yellow",
   timer: 0,
   gridSize: 180,
   alwaysOnTop: true,
@@ -67,7 +69,9 @@ function migrateDocument(data) {
       throw Error("Dữ liệu ảnh không hợp lệ.");
     item.style = styleOf({ ...DEFAULT_STYLE, ...item.style });
   }
-  return { ...data, settings: { ...DEFAULT_SETTINGS, ...data.settings } };
+  const settings = { ...DEFAULT_SETTINGS, ...data.settings };
+  if (!PALETTES.includes(settings.palette)) settings.palette = "yellow";
+  return { ...data, settings };
 }
 class Library {
   constructor(root) {
@@ -273,6 +277,7 @@ class Library {
       const s = doc.settings;
       if (["light", "dark", "system"].includes(patch.theme))
         s.theme = patch.theme;
+      if (PALETTES.includes(patch.palette)) s.palette = patch.palette;
       if ([0, 3, 5].includes(patch.timer)) s.timer = patch.timer;
       if (Number.isFinite(patch.gridSize))
         s.gridSize = Math.min(320, Math.max(110, patch.gridSize));

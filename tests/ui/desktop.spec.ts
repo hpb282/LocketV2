@@ -21,7 +21,7 @@ test("offline desktop capture, edit, export, favorite, restore, widget and video
     const errors: string[] = [];
     page.on("pageerror", (error) => errors.push(error.message));
     await expect(
-      page.getByRole("heading", { name: "Giữ lại một chút hôm nay." }),
+      page.getByRole("region", { name: "Máy ảnh", exact: true }),
     ).toBeVisible();
     await expect(
       page.getByRole("button", { name: "Chụp ảnh", exact: true }),
@@ -67,7 +67,18 @@ test("offline desktop capture, edit, export, favorite, restore, widget and video
     await expect.poll(() => app.windows().length).toBe(2);
     const widget = app.windows().find((w) => w !== page)!;
     await expect(widget.getByText("Locket x HPB")).toBeVisible();
-    await widget.getByRole("button", { name: "Đóng ảnh ghim" }).click();
+    await page.evaluate(() =>
+      window.hpb!.invoke("settings", { palette: "blue" }),
+    );
+    await expect(page.locator("html")).toHaveAttribute("data-palette", "blue");
+    await expect(widget.locator("html")).toHaveAttribute(
+      "data-palette",
+      "blue",
+    );
+    await widget
+      .getByRole("button", { name: "Đóng ảnh ghim" })
+      .click({ noWaitAfter: true });
+    await expect.poll(() => app.windows().length).toBe(1);
     await page.getByRole("button", { name: "Quay về", exact: true }).click();
     await expect(
       page.getByRole("heading", { name: "Tất cả khoảnh khắc." }),
@@ -123,7 +134,7 @@ test("offline desktop capture, edit, export, favorite, restore, widget and video
   }
 });
 
-test("native import persists across restart and light theme remains selected", async () => {
+test("native import, light mode and neon palette persist across restart", async () => {
   const profile = await mkdtemp(join(tmpdir(), "hpb-import-"));
   const launch = () =>
     electron.launch({
@@ -163,16 +174,48 @@ test("native import persists across restart and light theme remains selected", a
     await page.getByRole("button", { name: "Cài đặt", exact: true }).click();
     await page.getByRole("button", { name: "Sáng", exact: true }).click();
     await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+    const paletteGroup = page.getByRole("group", { name: "Màu nền neon" });
+    await expect(paletteGroup.getByRole("button")).toHaveCount(7);
+    const backgrounds = new Set<string>();
+    for (const [id, label] of [
+      ["yellow", "Vàng"],
+      ["blue", "Xanh dương"],
+      ["green", "Xanh lá"],
+      ["red", "Đỏ"],
+      ["purple", "Tím"],
+      ["cyan", "Cyan"],
+      ["pink", "Hồng"],
+    ]) {
+      const choice = paletteGroup.getByRole("button", {
+        name: `Neon ${label}`,
+        exact: true,
+      });
+      await choice.click();
+      await expect(page.locator("html")).toHaveAttribute("data-palette", id);
+      await expect(choice).toHaveAttribute("aria-pressed", "true");
+      backgrounds.add(
+        await page.evaluate(() =>
+          getComputedStyle(document.documentElement)
+            .getPropertyValue("--bg")
+            .trim(),
+        ),
+      );
+    }
+    expect(backgrounds.size).toBe(7);
+    await page.screenshot({ path: "test-results/neon-settings-light.png" });
     await app.close();
     app = await launch();
     page = await app.firstWindow();
     await expect(
-      page.getByRole("heading", { name: "Giữ lại một chút hôm nay." }),
+      page.getByRole("region", { name: "Máy ảnh", exact: true }),
     ).toBeVisible();
     const snap = await page.evaluate(() => window.hpb!.invoke("snapshot"));
     expect(snap.items).toHaveLength(1);
     expect(snap.items[0].caption).toBe("Ảnh nhập từ laptop");
     expect(snap.settings.theme).toBe("light");
+    expect(snap.settings.palette).toBe("pink");
+    await expect(page.locator("html")).toHaveAttribute("data-palette", "pink");
+    await page.screenshot({ path: "test-results/camera-neon-pink.png" });
     await page.getByRole("button", { name: "Tất cả ảnh & video" }).click();
     await expect(
       page.getByRole("button", { name: "Mở Ảnh nhập từ laptop" }),

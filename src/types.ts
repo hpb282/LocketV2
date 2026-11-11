@@ -1,3 +1,5 @@
+import type { PaletteId } from "./palettes";
+
 export type Frame =
   | "none"
   | "halloween"
@@ -30,6 +32,7 @@ export type Item = {
 };
 export type Settings = {
   theme: "light" | "dark" | "system";
+  palette: PaletteId;
   timer: 0 | 3 | 5;
   gridSize: number;
   alwaysOnTop: boolean;
@@ -77,6 +80,7 @@ export const defaultStyle: TextStyle = {
 };
 export const defaultSettings: Settings = {
   theme: "system",
+  palette: "yellow",
   timer: 0,
   gridSize: 180,
   alwaysOnTop: true,

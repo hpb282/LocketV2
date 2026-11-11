@@ -1,6 +1,6 @@
 # Locket x HPB
 
-Ứng dụng desktop cá nhân để giữ ảnh, video và những ghi chú nhỏ. Chạy offline, lưu dữ liệu trên laptop, giao diện vàng với chế độ sáng/tối. Một dự án độc lập, không kết nối với Locket chính thức.
+Ứng dụng desktop cá nhân để giữ ảnh, video và những ghi chú nhỏ. Chạy offline, lưu dữ liệu trên laptop, giao diện gọn với các màu nền neon và chế độ sáng/tối. Một dự án độc lập, không kết nối với Locket chính thức.
 
 ## Cài trên Windows
 
@@ -25,6 +25,7 @@ Repo hiện riêng tư, người tải cần được cấp quyền truy cập. 
 - Cửa sổ ảnh/video ghim, đổi kích thước, chuyển khoảnh khắc, luôn nổi tùy chọn.
 - Thùng rác, chọn nhiều, khôi phục, xác nhận trước khi xóa vĩnh viễn.
 - Sáng / Tối / Theo hệ thống; cài đặt được giữ qua các lần mở app.
+- 7 màu nền neon: vàng, xanh dương, xanh lá, đỏ, hồng, tím, cyan; chọn trong **Cài đặt → Màu nền neon**, đồng bộ cả cửa sổ ghim.
 - **Cập nhật trong app:** kiểm tra → tải → cài và khởi động lại từ GitHub Releases, giữ nguyên thư viện.
 
 ## Chạy mã nguồn
@@ -52,3 +53,5 @@ npm run dist:win # tạo bộ cài Windows trong release/ (chạy trên Windows)
 Nút **Cập nhật** nằm ở thanh bên trái, đồng thời có trong **Cài đặt**. App không tự tải/cài âm thầm. Nếu repo vẫn riêng tư, màn hình cập nhật hỗ trợ token đọc Releases do người dùng cung cấp cho phiên làm việc; không có token dùng chung đóng gói trong app.
 
 Xem [hướng dẫn phát triển, dữ liệu và phát hành](docs/development.md) để thêm tính năng và tạo bản cập nhật bằng tag phiên bản. Hosting và đồng bộ đám mây được dành cho giai đoạn sau.
+
+Bản **0.2.0** bỏ phần chữ giới thiệu trên màn hình chụp, thêm các màu nền neon nhẹ và giữ nguyên thư viện của bản 0.1.0 khi cập nhật.

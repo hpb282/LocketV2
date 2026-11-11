@@ -5,6 +5,7 @@
 - `src/Capture.tsx`: vòng đời webcam, hẹn giờ, MediaRecorder, giới hạn 10 giây.
 - `src/Review.tsx`, `src/Tools.tsx`: xem lại, ghi chú và công cụ trang trí.
 - `src/frames.ts`: renderer Canvas dùng chung khi xem và khi xuất ảnh.
+- `src/palettes.ts`: danh sách màu nền neon; giá trị màu được áp dụng qua CSS variables trong `styles.css` và `data-palette` trên cả cửa sổ chính lẫn cửa sổ ghim.
 - `src/App.tsx`: thư viện, yêu thích, thùng rác, cài đặt và cửa sổ ghim.
 - `src/Updates.tsx`: giao diện cập nhật.
 - `electron/library.cjs`: lưu trữ, ghi nguyên tử, bản sao chỉ mục, phiên bản schema.
@@ -47,6 +48,8 @@ Thư mục mặc định trên Windows: `%APPDATA%\Locket x HPB\library`.
 - `media/`: tệp ảnh/video riêng theo UUID. Trang trí và ghi chú không ghi đè lên ảnh gốc trong thư viện.
 
 Nút **Mở thư mục thư viện** cho phép sao lưu thủ công. Đóng app trước khi sao chép toàn bộ thư mục `library`; bản sao chỉ mục `.bak` không thay thế bản sao lưu toàn bộ thư viện. App không mã hóa ảnh trên đĩa. Cập nhật hoặc gỡ bản cài mặc định không xóa dữ liệu.
+
+Từ 0.2.0, `settings.palette` lưu màu nền (`yellow`, `blue`, `green`, `red`, `pink`, `purple`, `cyan`). Thư viện 0.1.0 thiếu khóa này sẽ nhận mặc định `yellow`, giữ các cài đặt và khoảnh khắc hiện có; schema vẫn tương thích phiên bản 1.
 
 Để kiểm thử cô lập, dùng `HPB_USER_DATA` trỏ tới thư mục tạm. Không dùng thư viện thật để chạy test. Renderer dùng context isolation, sandbox và CSP; không có Node.js API. Các tệp app/media chỉ được phục vụ qua giao thức với đường dẫn đã xác thực.
 

@@ -317,22 +317,7 @@ export function Capture({
       />
     );
   return (
-    <section className="page capture-page">
-      <header className="page-header">
-        <div>
-          <p className="eyebrow">GÓC NHỎ CỦA BẠN</p>
-          <h1>Giữ lại một chút hôm nay.</h1>
-          <p className="subtitle">
-            Những điều bình thường, những khoảnh khắc đáng nhớ.
-          </p>
-        </div>
-        <span className="date-label">
-          {new Date().toLocaleDateString("vi-VN", {
-            day: "numeric",
-            month: "long",
-          })}
-        </span>
-      </header>
+    <section className="page capture-page" aria-label="Máy ảnh">
       <div className="capture-layout">
         <div className="camera-column">
           <div className="segmented capture-mode">
@@ -466,15 +451,17 @@ export function Capture({
               <span>{settings.timer ? `${settings.timer}s` : "Hẹn giờ"}</span>
             </button>
           </div>
-          <p className="quiet-note">
-            {processing
-              ? "Đang xử lý video…"
-              : countdown
-                ? "Sẵn sàng nhé…"
-                : mode === "video"
-                  ? "Tự dừng ở giây thứ 10 · Có thể dừng sớm"
-                  : "Chụp một lần, giữ lại thật lâu."}
-          </p>
+          {(processing || countdown > 0 || mode === "video") && (
+            <p className="quiet-note">
+              {processing
+                ? "Đang xử lý video…"
+                : countdown
+                  ? "Sẵn sàng nhé…"
+                  : mode === "video"
+                    ? "Tự dừng ở giây thứ 10 · Có thể dừng sớm"
+                    : ""}
+            </p>
+          )}
         </div>
         <aside className="recent-panel">
           <h3>

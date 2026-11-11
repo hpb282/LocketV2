@@ -1,4 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  type CSSProperties,
+} from "react";
 import {
   Camera,
   Images,
@@ -25,6 +31,7 @@ import {
   Expand,
   Heart,
   Download,
+  Palette,
 } from "lucide-react";
 import { invoke, mediaURL, snapshot, formatDuration } from "./api";
 import {
@@ -39,6 +46,7 @@ import { Capture, imageDraft } from "./Capture";
 import { MediaSurface } from "./MediaSurface";
 import { Review } from "./Review";
 import { Updates } from "./Updates";
+import { palettes } from "./palettes";
 
 type Page =
   | "camera"
@@ -51,6 +59,7 @@ function useTheme(settings: Settings) {
   useEffect(() => {
     const media = window.matchMedia("(prefers-color-scheme: dark)");
     const apply = () => {
+      document.documentElement.dataset.palette = settings.palette;
       document.documentElement.dataset.theme =
         settings.theme === "system"
           ? media.matches
@@ -61,7 +70,7 @@ function useTheme(settings: Settings) {
     apply();
     media.addEventListener("change", apply);
     return () => media.removeEventListener("change", apply);
-  }, [settings.theme]);
+  }, [settings.theme, settings.palette]);
 }
 function Widget() {
   const [data, setData] = useState<{ item: Item | null; settings: Settings }>({
@@ -149,7 +158,7 @@ function MainApp() {
   const [data, setData] = useState<Snapshot>({
       items: [],
       settings: defaultSettings,
-      version: "0.1.0",
+      version: "0.2.0",
       desktop: true,
     }),
     [page, setPage] = useState<Page>("camera"),
@@ -364,6 +373,42 @@ function MainApp() {
               </div>
             </header>
             <div className="settings-grid">
+              <div className="settings-card palette-card">
+                <h3>
+                  <Palette size={19} />
+                  Màu nền neon
+                </h3>
+                <div
+                  className="palette-options"
+                  role="group"
+                  aria-label="Màu nền neon"
+                >
+                  {palettes.map((option) => (
+                    <button
+                      key={option.id}
+                      className={`palette-choice ${data.settings.palette === option.id ? "selected" : ""}`}
+                      aria-label={`Neon ${option.label}`}
+                      aria-pressed={data.settings.palette === option.id}
+                      onClick={() => settings({ palette: option.id })}
+                      style={
+                        {
+                          "--swatch": option.accent,
+                          "--swatch-rgb": option.rgb,
+                          "--swatch-base": option.base,
+                        } as CSSProperties
+                      }
+                    >
+                      <span className="palette-preview">
+                        <Camera size={22} />
+                        {data.settings.palette === option.id && (
+                          <Check size={14} className="palette-check" />
+                        )}
+                      </span>
+                      <span>{option.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
               <div className="settings-card">
                 <h3>
                   <Monitor size={19} />

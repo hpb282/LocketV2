@@ -125,3 +125,31 @@ test("invalid mutation leaves current and persisted metadata unchanged", async (
   const reopened = await new Library(root).open();
   assert.equal(reopened.item(item.id).favorite, true);
 });
+
+test("opening a 0.1 library adds the palette setting without changing its photos", async (t) => {
+  const { library, root } = await fixture(t);
+  const item = await library.add(sample, Buffer.from("original image"));
+  await library.settings({ theme: "dark", timer: 3 });
+  const file = path.join(root, "library.json");
+  const legacy = JSON.parse(await fs.readFile(file, "utf8"));
+  delete legacy.settings.palette;
+  await fs.writeFile(file, JSON.stringify(legacy));
+  const reopened = await new Library(root).open();
+  assert.equal(reopened.snapshot().settings.palette, "yellow");
+  assert.equal(reopened.snapshot().settings.theme, "dark");
+  assert.equal(reopened.snapshot().settings.timer, 3);
+  assert.deepEqual(reopened.snapshot().items, legacy.items);
+  assert.equal(
+    (await fs.readFile(reopened.mediaPath(item.id))).toString(),
+    "original image",
+  );
+});
+
+test("palette selection survives restart and rejects unsupported values", async (t) => {
+  const { library, root } = await fixture(t);
+  await library.settings({ palette: "pink", theme: "light" });
+  await library.settings({ palette: "not-a-theme" });
+  const reopened = await new Library(root).open();
+  assert.equal(reopened.snapshot().settings.palette, "pink");
+  assert.equal(reopened.snapshot().settings.theme, "light");
+});
