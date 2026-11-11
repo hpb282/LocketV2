@@ -1,1 +1,54 @@
-# LocketV2
+# Locket x HPB
+
+Ứng dụng desktop cá nhân để giữ ảnh, video và những ghi chú nhỏ. Chạy offline, lưu dữ liệu trên laptop, giao diện vàng với chế độ sáng/tối. Một dự án độc lập, không kết nối với Locket chính thức.
+
+## Cài trên Windows
+
+1. Mở [GitHub Releases](https://github.com/hpb282/LocketV2/releases).
+2. Tải tệp **Locket-x-HPB-…-Windows-Setup.exe** của bản mới nhất.
+3. Chạy bộ cài và chọn thư mục. App được thêm vào **Start Menu** và tạo **shortcut trên Desktop** với icon riêng.
+4. Mở **Locket x HPB**. Cấp quyền webcam/micro khi bạn muốn dùng chúng; vẫn có thể chọn ảnh từ máy khi không có webcam.
+
+Repo hiện riêng tư, người tải cần được cấp quyền truy cập. Bản cài dành cho Windows 10/11 x64. Trước khi Release xuất hiện, có thể tải bộ cài ở **Actions → Build and release Windows app → Artifacts** sau khi workflow thành công.
+
+## Tính năng
+
+- Chụp webcam, chọn camera, lật gương, hẹn giờ 3 hoặc 5 giây.
+- Nhập ảnh từ laptop; xem lại, chụp lại và lưu.
+- Quay video tối đa 10 giây, dừng sớm, bật/tắt micro.
+- Ghi chú bo tròn ở mép dưới ảnh/video, sửa sau khi lưu.
+- Khung Halloween, Giáng sinh, Tết, sinh nhật, Polaroid; hiệu ứng chữ, màu và cỡ chữ.
+- Bảng công cụ trang trí bên phải có thể mở rộng/thu gọn.
+- Lưới ảnh/video, tìm ghi chú, lọc loại/tháng, yêu thích, chỉnh kích thước lưới.
+- Xem lớn, phím ← → chuyển khoảnh khắc, Esc về thư viện.
+- Xuất ảnh PNG có ghi chú và khung; xuất video WebM gốc.
+- Cửa sổ ảnh/video ghim, đổi kích thước, chuyển khoảnh khắc, luôn nổi tùy chọn.
+- Thùng rác, chọn nhiều, khôi phục, xác nhận trước khi xóa vĩnh viễn.
+- Sáng / Tối / Theo hệ thống; cài đặt được giữ qua các lần mở app.
+- **Cập nhật trong app:** kiểm tra → tải → cài và khởi động lại từ GitHub Releases, giữ nguyên thư viện.
+
+## Chạy mã nguồn
+
+Cài Node.js 24 LTS và Git, sau đó:
+
+```bash
+git clone https://github.com/hpb282/LocketV2.git
+cd LocketV2
+npm ci
+npm run dev
+```
+
+`npm run dev` mở app Electron và giao diện phát triển. Electron có thể tải binary lần đầu khởi chạy. `npm run dev:web` chỉ để xem giao diện trong trình duyệt; chức năng lưu file/native cần bản Electron.
+
+```bash
+npm test         # kiểm thử lưu trữ và cập nhật
+npm run build    # kiểm tra TypeScript và build giao diện
+npm run test:ui  # kiểm thử app desktop với webcam giả lập
+npm run dist:win # tạo bộ cài Windows trong release/ (chạy trên Windows)
+```
+
+## Cập nhật và mở rộng
+
+Nút **Cập nhật** nằm ở thanh bên trái, đồng thời có trong **Cài đặt**. App không tự tải/cài âm thầm. Nếu repo vẫn riêng tư, màn hình cập nhật hỗ trợ token đọc Releases do người dùng cung cấp cho phiên làm việc; không có token dùng chung đóng gói trong app.
+
+Xem [hướng dẫn phát triển, dữ liệu và phát hành](docs/development.md) để thêm tính năng và tạo bản cập nhật bằng tag phiên bản. Hosting và đồng bộ đám mây được dành cho giai đoạn sau.
