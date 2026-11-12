@@ -1,17 +1,39 @@
 :root {
   font-family: "Segoe UI", Arial, sans-serif;
   color-scheme: light;
-  --bg: var(--light-bg, #fff9eb);
-  --panel: var(--light-panel, #fffdf5);
-  --panel2: var(--light-panel2, #f5eddb);
-  --text: #343126;
-  --muted: #8d8573;
-  --border: var(--light-border, #e8deca);
+  --light-bg: #f7dfa1;
+  --light-start: #ffe8ad;
+  --light-end: #e8c778;
+  --dark-bg: #4b351a;
+  --dark-start: #62431c;
+  --dark-end: #443719;
+  --bg: var(--light-bg);
+  --canvas-start: var(--light-start);
+  --canvas-end: var(--light-end);
+  --canvas:
+    radial-gradient(
+      ellipse at 90% 5%,
+      rgb(var(--neon-rgb) / 0.15),
+      transparent 65%
+    ),
+    linear-gradient(
+      145deg,
+      var(--canvas-start),
+      var(--bg) 48%,
+      var(--canvas-end)
+    );
+  --panel: color-mix(in srgb, white 72%, var(--bg));
+  --panel2: color-mix(in srgb, white 42%, var(--bg));
+  --text: #322b1f;
+  --muted: #51473f;
+  --border: color-mix(in srgb, var(--ink) 23%, var(--bg));
   --accent: #ffd45a;
   --accent-hover: color-mix(in srgb, var(--accent) 85%, white);
   --ink: #25282c;
   --neon-rgb: 255 212 90;
-  --danger: #c85446;
+  --neon-lead: #fff2a6;
+  --neon-tail: #ffac2e;
+  --danger: #9a2e26;
   --shadow: 0 12px 40px #6e543915;
   background: var(--bg);
   color: var(--text);
@@ -21,86 +43,88 @@
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --bg: var(--dark-bg, #201e17);
-  --panel: var(--dark-panel, #2b2921);
-  --panel2: var(--dark-panel2, #363329);
-  --text: #f7f5eb;
-  --muted: #a2a698;
-  --border: var(--dark-border, #464234);
-  --danger: #f08b7b;
+  --bg: var(--dark-bg);
+  --canvas-start: var(--dark-start);
+  --canvas-end: var(--dark-end);
+  --panel: color-mix(in srgb, black 35%, var(--bg));
+  --panel2: color-mix(in srgb, black 20%, var(--bg));
+  --text: #fff9f0;
+  --muted: #e7dfd4;
+  --border: color-mix(in srgb, white 24%, var(--panel));
+  --danger: #ffc5b9;
   --shadow: 0 12px 40px #0002;
 }
 :root[data-palette="blue"] {
   --accent: #8bbcff;
   --neon-rgb: 83 153 255;
-  --light-bg: #f1f6ff;
-  --light-panel: #f9fbff;
-  --light-panel2: #e2edff;
-  --light-border: #cbdcf5;
-  --dark-bg: #141c2a;
-  --dark-panel: #1d283b;
-  --dark-panel2: #29364b;
-  --dark-border: #364763;
+  --light-bg: #cbdffe;
+  --light-start: #d6ecff;
+  --light-end: #b8c7f5;
+  --dark-bg: #16395f;
+  --dark-start: #194b79;
+  --dark-end: #242f6b;
+  --neon-lead: #bde9ff;
+  --neon-tail: #756aff;
 }
 :root[data-palette="green"] {
   --accent: #7be4ad;
   --neon-rgb: 68 222 147;
-  --light-bg: #f0fbf5;
-  --light-panel: #f9fffb;
-  --light-panel2: #dff3e8;
-  --light-border: #c5e4d3;
-  --dark-bg: #14231d;
-  --dark-panel: #203129;
-  --dark-panel2: #2a4035;
-  --dark-border: #365443;
+  --light-bg: #c4ead6;
+  --light-start: #d4f4d5;
+  --light-end: #a9ddce;
+  --dark-bg: #174c3c;
+  --dark-start: #1e6144;
+  --dark-end: #12474a;
+  --neon-lead: #caffb5;
+  --neon-tail: #39edb3;
 }
 :root[data-palette="red"] {
   --accent: #ff9299;
   --neon-rgb: 255 87 104;
-  --light-bg: #fff3f3;
-  --light-panel: #fffbfb;
-  --light-panel2: #ffe7e7;
-  --light-border: #f1d0d0;
-  --dark-bg: #28191f;
-  --dark-panel: #35252d;
-  --dark-panel2: #443039;
-  --dark-border: #5b3a43;
+  --light-bg: #f5c7bc;
+  --light-start: #ffd3bc;
+  --light-end: #e7b1c5;
+  --dark-bg: #60292d;
+  --dark-start: #68321e;
+  --dark-end: #642138;
+  --neon-lead: #ffc285;
+  --neon-tail: #ff466b;
 }
 :root[data-palette="pink"] {
   --accent: #ffa0d7;
   --neon-rgb: 255 102 190;
-  --light-bg: #fff2fa;
-  --light-panel: #fffaff;
-  --light-panel2: #fbe3f4;
-  --light-border: #ecd0e4;
-  --dark-bg: #271925;
-  --dark-panel: #342336;
-  --dark-panel2: #432d43;
-  --dark-border: #573a54;
+  --light-bg: #f3c5e4;
+  --light-start: #ffd5e5;
+  --light-end: #d7b8ef;
+  --dark-bg: #602743;
+  --dark-start: #79334b;
+  --dark-end: #52245c;
+  --neon-lead: #ffd2f0;
+  --neon-tail: #af75ff;
 }
 :root[data-palette="purple"] {
   --accent: #bda6ff;
   --neon-rgb: 163 120 255;
-  --light-bg: #f6f2ff;
-  --light-panel: #fdfaff;
-  --light-panel2: #ece3ff;
-  --light-border: #ded2f2;
-  --dark-bg: #201a2d;
-  --dark-panel: #2d253d;
-  --dark-panel2: #3b3050;
-  --dark-border: #4c3f66;
+  --light-bg: #dbcdf8;
+  --light-start: #e4dcff;
+  --light-end: #c5b5ef;
+  --dark-bg: #443064;
+  --dark-start: #574079;
+  --dark-end: #34245a;
+  --neon-lead: #e3c8ff;
+  --neon-tail: #67d5ff;
 }
 :root[data-palette="cyan"] {
   --accent: #7ce4ee;
   --neon-rgb: 62 218 237;
-  --light-bg: #effbfc;
-  --light-panel: #f9ffff;
-  --light-panel2: #dff2f5;
-  --light-border: #c3e3e8;
-  --dark-bg: #14272b;
-  --dark-panel: #203439;
-  --dark-panel2: #2b4349;
-  --dark-border: #38565e;
+  --light-bg: #bbe7ed;
+  --light-start: #d3f5ef;
+  --light-end: #aaccea;
+  --dark-bg: #15505c;
+  --dark-start: #12606a;
+  --dark-end: #183b64;
+  --neon-lead: #c4fff9;
+  --neon-tail: #4d9eff;
 }
 * {
   box-sizing: border-box;
@@ -228,6 +252,7 @@ small {
   height: 100%;
   display: flex;
   overflow: hidden;
+  background: var(--canvas);
 }
 .nav-rail {
   width: 84px;
@@ -237,7 +262,8 @@ small {
   align-items: center;
   flex-direction: column;
   padding: 22px 12px 14px;
-  background: linear-gradient(180deg, var(--panel), var(--bg));
+  background: color-mix(in srgb, var(--panel) 24%, transparent);
+  backdrop-filter: blur(16px);
   z-index: 5;
 }
 .brand {
@@ -318,13 +344,7 @@ small {
   min-width: 0;
   overflow-y: auto;
   position: relative;
-  background:
-    radial-gradient(
-      ellipse at 100% 0%,
-      rgb(var(--neon-rgb) / 0.07),
-      transparent 60%
-    ),
-    var(--bg);
+  background: transparent;
 }
 .page {
   padding: 34px 38px;
@@ -495,6 +515,73 @@ small {
 }
 .camera-column {
   min-width: 0;
+}
+@property --neon-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+.neon-frame {
+  position: relative;
+  isolation: isolate;
+  min-width: 0;
+  padding: 3px;
+  border-radius: 30px;
+  background: rgb(var(--neon-rgb) / 0.28);
+  box-shadow:
+    0 0 16px rgb(var(--neon-rgb) / 0.15),
+    0 0 44px rgb(var(--neon-rgb) / 0.1);
+}
+.neon-frame::before,
+.neon-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 3px;
+  border-radius: inherit;
+  pointer-events: none;
+  background: conic-gradient(
+    from var(--neon-angle),
+    transparent 0deg 30deg,
+    var(--neon-tail) 64deg,
+    var(--neon-lead) 94deg,
+    var(--accent) 120deg,
+    transparent 158deg 210deg,
+    var(--neon-lead) 244deg,
+    var(--neon-tail) 274deg,
+    var(--accent) 300deg,
+    transparent 338deg
+  );
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  animation: neon-orbit 10s linear infinite;
+}
+.neon-frame::before {
+  z-index: 2;
+}
+.neon-frame::after {
+  z-index: -1;
+  inset: -4px;
+  padding: 7px;
+  filter: blur(9px);
+  opacity: 0.65;
+}
+@keyframes neon-orbit {
+  to {
+    --neon-angle: 360deg;
+  }
+}
+.neon-frame > .live-camera,
+.neon-frame > .editable-photo {
+  border-color: transparent;
+  box-shadow: none;
+}
+.neon-frame.review-frame {
+  max-width: 840px;
+  margin: auto;
+  border-radius: 28px;
 }
 .capture-mode {
   width: 260px;
@@ -1373,7 +1460,7 @@ small {
       rgb(var(--swatch-rgb) / 0.25),
       transparent 80%
     ),
-    var(--swatch-base);
+    linear-gradient(145deg, var(--swatch-base), var(--swatch-end));
   transition:
     border-color 0.15s,
     box-shadow 0.15s;
@@ -2165,7 +2252,7 @@ small {
   border: 2px solid var(--accent);
   border-radius: 16px;
   overflow: hidden;
-  background: var(--panel);
+  background: var(--canvas);
   padding: 0;
 }
 .drag {

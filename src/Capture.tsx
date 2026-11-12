@@ -338,77 +338,79 @@ export function Capture({
               Video 10s
             </button>
           </div>
-          <div className="live-camera">
-            <video
-              ref={video}
-              muted
-              playsInline
-              className={settings.mirror ? "mirrored" : ""}
-            />
-            {!ready && (
-              <div className="camera-placeholder">
-                <div className="camera-orbit">
-                  <Camera size={44} />
+          <div className="neon-frame">
+            <div className="live-camera">
+              <video
+                ref={video}
+                muted
+                playsInline
+                className={settings.mirror ? "mirrored" : ""}
+              />
+              {!ready && (
+                <div className="camera-placeholder">
+                  <div className="camera-orbit">
+                    <Camera size={44} />
+                  </div>
+                  <h2>{error ? "Camera chưa sẵn sàng" : "Đang mở webcam…"}</h2>
+                  <p>{error || "Một khoảnh khắc nhỏ, chỉ dành cho bạn."}</p>
+                  {error && (
+                    <button
+                      className="btn secondary"
+                      onClick={() => setRetry((x) => x + 1)}
+                    >
+                      <RefreshCw size={16} />
+                      Thử lại
+                    </button>
+                  )}
                 </div>
-                <h2>{error ? "Camera chưa sẵn sàng" : "Đang mở webcam…"}</h2>
-                <p>{error || "Một khoảnh khắc nhỏ, chỉ dành cho bạn."}</p>
-                {error && (
-                  <button
-                    className="btn secondary"
-                    onClick={() => setRetry((x) => x + 1)}
-                  >
-                    <RefreshCw size={16} />
-                    Thử lại
-                  </button>
-                )}
-              </div>
-            )}
-            {ready && (
-              <div className="camera-top-controls">
-                <label className="camera-device">
-                  <Camera size={15} />
-                  <select
-                    aria-label="Chọn webcam"
-                    value={device}
-                    disabled={recording || countdown > 0}
-                    onChange={(e) => setDevice(e.target.value)}
-                  >
-                    <option value="">Webcam mặc định</option>
-                    {devices.map((d) => (
-                      <option key={d.deviceId} value={d.deviceId}>
-                        {d.label || "Webcam"}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                {mode === "video" && (
-                  <button
-                    className="camera-device"
-                    disabled={recording || countdown > 0}
-                    onClick={() => setMic(!mic)}
-                  >
-                    {mic ? <Mic size={16} /> : <MicOff size={16} />}{" "}
-                    {mic ? "Bật mic" : "Tắt mic"}
-                  </button>
-                )}
-              </div>
-            )}
-            {countdown > 0 && (
-              <div className="countdown" role="status">
-                {countdown}
-              </div>
-            )}
-            {recording && (
-              <>
-                <div className="recording-badge">
-                  <i />
-                  ĐANG QUAY <strong>{elapsed.toFixed(1)} / 10s</strong>
+              )}
+              {ready && (
+                <div className="camera-top-controls">
+                  <label className="camera-device">
+                    <Camera size={15} />
+                    <select
+                      aria-label="Chọn webcam"
+                      value={device}
+                      disabled={recording || countdown > 0}
+                      onChange={(e) => setDevice(e.target.value)}
+                    >
+                      <option value="">Webcam mặc định</option>
+                      {devices.map((d) => (
+                        <option key={d.deviceId} value={d.deviceId}>
+                          {d.label || "Webcam"}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  {mode === "video" && (
+                    <button
+                      className="camera-device"
+                      disabled={recording || countdown > 0}
+                      onClick={() => setMic(!mic)}
+                    >
+                      {mic ? <Mic size={16} /> : <MicOff size={16} />}{" "}
+                      {mic ? "Bật mic" : "Tắt mic"}
+                    </button>
+                  )}
                 </div>
-                <div className="recording-progress">
-                  <span style={{ width: `${elapsed * 10}%` }} />
+              )}
+              {countdown > 0 && (
+                <div className="countdown" role="status">
+                  {countdown}
                 </div>
-              </>
-            )}
+              )}
+              {recording && (
+                <>
+                  <div className="recording-badge">
+                    <i />
+                    ĐANG QUAY <strong>{elapsed.toFixed(1)} / 10s</strong>
+                  </div>
+                  <div className="recording-progress">
+                    <span style={{ width: `${elapsed * 10}%` }} />
+                  </div>
+                </>
+              )}
+            </div>
           </div>
           <div className="shutter-row">
             <button

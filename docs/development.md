@@ -5,7 +5,7 @@
 - `src/Capture.tsx`: vòng đời webcam, hẹn giờ, MediaRecorder, giới hạn 10 giây.
 - `src/Review.tsx`, `src/Tools.tsx`: xem lại, ghi chú và công cụ trang trí.
 - `src/frames.ts`: renderer Canvas dùng chung khi xem và khi xuất ảnh.
-- `src/palettes.ts`: danh sách màu nền neon; giá trị màu được áp dụng qua CSS variables trong `styles.css` và `data-palette` trên cả cửa sổ chính lẫn cửa sổ ghim.
+- `src/palettes.ts`: danh sách màu nền neon và màu xem trước; CSS variables trong `styles.css` áp dụng theo `data-palette` trên cả cửa sổ chính lẫn cửa sổ ghim. Từ 0.5.0, `--canvas` phủ toàn bộ nền, thanh bên dùng bề mặt trong mờ, hai pseudo-element của `.neon-frame` tạo viền conic có mặt nạ rỗng để không phủ camera/ảnh. `prefers-reduced-motion` dừng chuyển động, giữ viền sáng tĩnh.
 - `src/Memories.tsx`, `src/calendar.ts`: lịch kỷ niệm và gom ngày theo múi giờ của laptop, bỏ qua khoảnh khắc trong thùng rác.
 - `src/Profile.tsx`, `src/Avatar.tsx`: chỉnh hồ sơ và avatar ở thanh bên.
 - `src/Developer.tsx`, `electron/developer.json`: trang người phát triển và thông tin liên hệ dùng chung. Sau khi đổi liên kết, chạy `npm run qr:developer` để tạo lại SVG trong `src/assets/developer/`; QR được đóng gói trong app, không gọi dịch vụ QR bên ngoài.

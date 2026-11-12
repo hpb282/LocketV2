@@ -154,55 +154,57 @@ export function Review({
       </header>
       <div className={`editor-layout ${tools ? "expanded" : ""}`}>
         <div className="editor-main">
-          <div className="editable-photo">
-            <MediaSurface
-              src={src}
-              kind={media.kind}
-              width={media.width}
-              height={media.height}
-              style={style}
-              caption={editing ? "" : caption}
-              controls
-            />
-            {editing ? (
-              <textarea
-                ref={edit}
-                autoFocus
-                className="inline-note"
-                style={media.kind === "video" ? { bottom: "18%" } : undefined}
-                aria-label="Ghi chú trên ảnh"
-                placeholder="Thêm một ghi chú…"
-                maxLength={240}
-                value={caption}
-                onChange={(e) => setCaption(e.target.value)}
-                onBlur={() => setEditing(false)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) {
-                    e.preventDefault();
-                    setEditing(false);
-                  }
-                  if (e.key === "Escape") setEditing(false);
-                }}
+          <div className="neon-frame review-frame">
+            <div className="editable-photo">
+              <MediaSurface
+                src={src}
+                kind={media.kind}
+                width={media.width}
+                height={media.height}
+                style={style}
+                caption={editing ? "" : caption}
+                controls
               />
-            ) : (
-              <button
-                className={`note-hotspot ${caption ? "has-note" : ""}`}
-                style={
-                  media.kind === "video"
-                    ? { bottom: "16%", height: "18%" }
-                    : undefined
-                }
-                aria-label="Sửa ghi chú trên ảnh"
-                onClick={() => setEditing(true)}
-              >
-                {!caption && (
-                  <>
-                    <Pencil size={15} />
-                    Thêm một ghi chú
-                  </>
-                )}
-              </button>
-            )}
+              {editing ? (
+                <textarea
+                  ref={edit}
+                  autoFocus
+                  className="inline-note"
+                  style={media.kind === "video" ? { bottom: "18%" } : undefined}
+                  aria-label="Ghi chú trên ảnh"
+                  placeholder="Thêm một ghi chú…"
+                  maxLength={240}
+                  value={caption}
+                  onChange={(e) => setCaption(e.target.value)}
+                  onBlur={() => setEditing(false)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      setEditing(false);
+                    }
+                    if (e.key === "Escape") setEditing(false);
+                  }}
+                />
+              ) : (
+                <button
+                  className={`note-hotspot ${caption ? "has-note" : ""}`}
+                  style={
+                    media.kind === "video"
+                      ? { bottom: "16%", height: "18%" }
+                      : undefined
+                  }
+                  aria-label="Sửa ghi chú trên ảnh"
+                  onClick={() => setEditing(true)}
+                >
+                  {!caption && (
+                    <>
+                      <Pencil size={15} />
+                      Thêm một ghi chú
+                    </>
+                  )}
+                </button>
+              )}
+            </div>
           </div>
           <div className="review-actions">
             {onRetake && (

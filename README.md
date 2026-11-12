@@ -28,7 +28,8 @@ Bản cài dành cho Windows 10/11 x64. Repo hiện công khai, bạn bè có th
 - Cửa sổ ảnh/video ghim, đổi kích thước, chuyển khoảnh khắc, luôn nổi tùy chọn.
 - Thùng rác, chọn nhiều, khôi phục, xác nhận trước khi xóa vĩnh viễn.
 - Sáng / Tối / Theo hệ thống; cài đặt được giữ qua các lần mở app.
-- 7 màu nền neon: vàng, xanh dương, xanh lá, đỏ, hồng, tím, cyan; chọn trong **Cài đặt → Màu nền neon**, đồng bộ cả cửa sổ ghim.
+- 7 màu phủ toàn bộ nền và thanh bên: vàng, xanh dương, xanh lá, đỏ, hồng, tím, cyan; chọn trong **Cài đặt → Màu nền neon**, đồng bộ cả cửa sổ ghim.
+- Hai dải neon chuyển động quanh camera và khung xem lại, đổi theo màu đang chọn; đứng yên khi hệ thống bật giảm chuyển động.
 - **Cập nhật trong app:** kiểm tra → tải → cài và khởi động lại từ GitHub Releases, giữ nguyên thư viện.
 
 ## Chạy mã nguồn
@@ -62,3 +63,5 @@ Bản **0.2.0** bỏ phần chữ giới thiệu trên màn hình chụp, thêm 
 Bản **0.3.0** thêm lịch Kỷ niệm và hồ sơ cá nhân, thay nút HPB trong thanh bên bằng avatar có thể đổi. Hồ sơ được lưu riêng trong thư viện cục bộ; avatar không được tính là ảnh chụp và không xuất hiện trong lịch.
 
 Bản **0.4.0** thêm mục Người phát triển với các thông tin liên hệ và ba QR được tạo từ liên kết liên hệ. QR có sẵn trong app, xem được khi offline; mở liên kết cần kết nối Internet. Thông tin người phát triển tách riêng khỏi hồ sơ của người dùng.
+
+Bản **0.5.0** phủ màu toàn bộ cửa sổ, đồng bộ nền thanh bên và ảnh ghim; thêm hai dải neon chạy chậm quanh camera và khung xem lại. Cả 7 màu đều hỗ trợ sáng/tối, giữ lựa chọn màu và thư viện sau cập nhật.

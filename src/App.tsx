@@ -172,7 +172,7 @@ function MainApp() {
       items: [],
       settings: defaultSettings,
       profile: defaultProfile,
-      version: "0.4.0",
+      version: "0.5.0",
       desktop: true,
     }),
     [page, setPage] = useState<Page>("camera"),
@@ -421,6 +421,7 @@ function MainApp() {
                           "--swatch": option.accent,
                           "--swatch-rgb": option.rgb,
                           "--swatch-base": option.base,
+                          "--swatch-end": option.end,
                         } as CSSProperties
                       }
                     >
