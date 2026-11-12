@@ -8,12 +8,14 @@ const {
   net,
   shell,
   nativeImage,
+  clipboard,
 } = require("electron");
 const fs = require("node:fs/promises");
 const path = require("node:path");
 const { pathToFileURL } = require("node:url");
 const { Library } = require("./library.cjs");
 const { createUpdateService } = require("./updater.cjs");
+const { developerContact } = require("./developer.cjs");
 const { autoUpdater } = require("electron-updater");
 protocol.registerSchemesAsPrivileged([
   {
@@ -128,6 +130,15 @@ if (!app.requestSingleInstanceLock()) {
           version: app.getVersion(),
           desktop: true,
         };
+      case "developer:copy":
+        clipboard.writeText(developerContact(payload).text);
+        return true;
+      case "developer:open": {
+        const contact = developerContact(payload);
+        if (!contact.url) throw Error("Hãy sao chép số điện thoại để liên hệ.");
+        await shell.openExternal(contact.url);
+        return true;
+      }
       case "profile:update": {
         const profile = await library.updateProfile(payloadObject(payload));
         broadcast();

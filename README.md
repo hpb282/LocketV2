@@ -9,7 +9,7 @@
 3. Chạy bộ cài và chọn thư mục. App được thêm vào **Start Menu** và tạo **shortcut trên Desktop** với icon riêng.
 4. Mở **Locket x HPB**. Cấp quyền webcam/micro khi bạn muốn dùng chúng; vẫn có thể chọn ảnh từ máy khi không có webcam.
 
-Repo hiện riêng tư, người tải cần được cấp quyền truy cập. Bản cài dành cho Windows 10/11 x64. Trước khi Release xuất hiện, có thể tải bộ cài ở **Actions → Build and release Windows app → Artifacts** sau khi workflow thành công.
+Bản cài dành cho Windows 10/11 x64. Repo hiện công khai, bạn bè có thể tải trực tiếp từ Releases. Trước khi Release xuất hiện, có thể tải bộ cài ở **Actions → Build and release Windows app → Artifacts** sau khi workflow thành công.
 
 ## Tính năng
 
@@ -22,6 +22,7 @@ Repo hiện riêng tư, người tải cần được cấp quyền truy cập. 
 - Lưới ảnh/video, tìm ghi chú, lọc loại/tháng, yêu thích, chỉnh kích thước lưới.
 - **Kỷ niệm:** lịch theo tháng/ngày với ảnh đại diện từng ngày và số lượng ảnh/video; bấm ngày để xem lại.
 - **Hồ sơ cá nhân:** bấm avatar ở đầu thanh bên trái để sửa tên, biệt danh, ngày sinh, giới thiệu, thành phố và đổi ảnh đại diện.
+- **Người phát triển:** trong Cài đặt, xem thông tin Hồ Phương Bắc · hpb, sao chép email/số điện thoại; quét/phóng lớn QR và mở Zalo, Instagram, Messenger.
 - Xem lớn, phím ← → chuyển khoảnh khắc, Esc về thư viện.
 - Xuất ảnh PNG có ghi chú và khung; xuất video WebM gốc.
 - Cửa sổ ảnh/video ghim, đổi kích thước, chuyển khoảnh khắc, luôn nổi tùy chọn.
@@ -52,10 +53,12 @@ npm run dist:win # tạo bộ cài Windows trong release/ (chạy trên Windows)
 
 ## Cập nhật và mở rộng
 
-Nút **Cập nhật** nằm ở thanh bên trái, đồng thời có trong **Cài đặt**. App không tự tải/cài âm thầm. Nếu repo vẫn riêng tư, màn hình cập nhật hỗ trợ token đọc Releases do người dùng cung cấp cho phiên làm việc; không có token dùng chung đóng gói trong app.
+Nút **Cập nhật** nằm ở thanh bên trái, đồng thời có trong **Cài đặt**. App không tự tải/cài âm thầm. Nguồn phát hành công khai không cần token. Nếu chuyển repo sang riêng tư, màn hình cập nhật hỗ trợ token đọc Releases do người dùng cung cấp cho phiên làm việc; không có token dùng chung đóng gói trong app.
 
 Xem [hướng dẫn phát triển, dữ liệu và phát hành](docs/development.md) để thêm tính năng và tạo bản cập nhật bằng tag phiên bản. Hosting và đồng bộ đám mây được dành cho giai đoạn sau.
 
 Bản **0.2.0** bỏ phần chữ giới thiệu trên màn hình chụp, thêm các màu nền neon nhẹ và giữ nguyên thư viện của bản 0.1.0 khi cập nhật.
 
 Bản **0.3.0** thêm lịch Kỷ niệm và hồ sơ cá nhân, thay nút HPB trong thanh bên bằng avatar có thể đổi. Hồ sơ được lưu riêng trong thư viện cục bộ; avatar không được tính là ảnh chụp và không xuất hiện trong lịch.
+
+Bản **0.4.0** thêm mục Người phát triển với các thông tin liên hệ và ba QR được tạo từ liên kết liên hệ. QR có sẵn trong app, xem được khi offline; mở liên kết cần kết nối Internet. Thông tin người phát triển tách riêng khỏi hồ sơ của người dùng.

@@ -8,6 +8,8 @@
 - `src/palettes.ts`: danh sách màu nền neon; giá trị màu được áp dụng qua CSS variables trong `styles.css` và `data-palette` trên cả cửa sổ chính lẫn cửa sổ ghim.
 - `src/Memories.tsx`, `src/calendar.ts`: lịch kỷ niệm và gom ngày theo múi giờ của laptop, bỏ qua khoảnh khắc trong thùng rác.
 - `src/Profile.tsx`, `src/Avatar.tsx`: chỉnh hồ sơ và avatar ở thanh bên.
+- `src/Developer.tsx`, `electron/developer.json`: trang người phát triển và thông tin liên hệ dùng chung. Sau khi đổi liên kết, chạy `npm run qr:developer` để tạo lại SVG trong `src/assets/developer/`; QR được đóng gói trong app, không gọi dịch vụ QR bên ngoài.
+- `electron/developer.cjs`: chỉ cho phép sao chép/mở các mục liên hệ định sẵn bằng ID; không nhận URL tùy ý từ renderer.
 - `electron/profile.cjs`: kiểm tra dữ liệu hồ sơ và ngày sinh; ảnh đại diện được chọn/chuẩn hóa trong tiến trình chính.
 - `src/App.tsx`: thư viện, yêu thích, thùng rác, cài đặt và cửa sổ ghim.
 - `src/Updates.tsx`: giao diện cập nhật.
@@ -36,11 +38,11 @@
 
 Không phát hành tag đã tồn tại với mã nguồn khác. Phiên bản prerelease và downgrade không được tự động cài. Bản dev không tự cập nhật.
 
-## Repo riêng tư
+## Quyền truy cập repo
 
-Repo LocketV2 hiện private. Người dùng cần quyền đọc repo để tải Releases. Trong mục quyền truy cập trên màn hình cập nhật, người dùng có thể nhập fine-grained GitHub token chỉ có **Contents: Read** cho LocketV2. Token chỉ nằm trong bộ nhớ tiến trình chính cho phiên làm việc, không lưu vào thư viện, file cấu hình hay binary. Không nhúng `GH_TOKEN` phát hành vào mã nguồn hoặc cấu hình `publish`.
+Repo LocketV2 hiện công khai, tải Releases và cập nhật không cần token. Nếu chuyển sang riêng tư, người dùng cần quyền đọc repo để tải Releases. Trong mục quyền truy cập trên màn hình cập nhật, người dùng có thể nhập fine-grained GitHub token chỉ có **Contents: Read** cho LocketV2. Token chỉ nằm trong bộ nhớ tiến trình chính cho phiên làm việc, không lưu vào thư viện, file cấu hình hay binary. Không nhúng `GH_TOKEN` phát hành vào mã nguồn hoặc cấu hình `publish`.
 
-Nếu muốn bạn bè tải/cập nhật không cần xác thực, chủ repo có thể chủ động công khai repo phát hành hoặc cấu hình nguồn phát hành công khai riêng trong `electron/updater.cjs` và `package.json`. App không tự thay đổi quyền riêng tư của repo.
+Chủ repo có thể cấu hình nguồn phát hành công khai riêng trong `electron/updater.cjs` và `package.json` nếu muốn giữ mã nguồn riêng tư nhưng chia sẻ bản cài. App không tự thay đổi quyền riêng tư của repo.
 
 ## Dữ liệu
 

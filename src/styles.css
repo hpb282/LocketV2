@@ -1774,6 +1774,240 @@ small {
 .about-card p {
   margin-bottom: 10px;
 }
+.about-links {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 26px;
+  row-gap: 10px;
+}
+.developer-page {
+  max-width: 1180px;
+}
+.developer-back {
+  margin-bottom: 13px;
+}
+.developer-intro {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  margin-bottom: 26px;
+}
+.developer-monogram {
+  width: 88px;
+  height: 88px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  flex-shrink: 0;
+  border-radius: 27px;
+  background: var(--accent);
+  color: var(--ink);
+  box-shadow: 0 0 28px rgb(var(--neon-rgb) / 0.14);
+}
+.developer-monogram span {
+  font-size: 22px;
+  font-weight: 750;
+  letter-spacing: -1px;
+}
+.developer-app-name,
+.developer-alias {
+  color: var(--muted);
+  font-size: 12px;
+  margin: 0;
+}
+.developer-intro h2 {
+  font-size: 25px;
+  margin: 4px 0;
+  letter-spacing: -0.5px;
+}
+.developer-contacts {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+  gap: 16px;
+  margin-bottom: 30px;
+}
+.developer-contact {
+  display: flex;
+  gap: 13px;
+  align-items: center;
+  min-width: 0;
+  padding: 17px 18px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  border-radius: 19px;
+}
+.developer-contact > svg {
+  color: var(--muted);
+  flex-shrink: 0;
+}
+.developer-contact-value {
+  min-width: 0;
+  flex: 1;
+}
+.developer-contact-value span {
+  font-size: 11px;
+  color: var(--muted);
+}
+.developer-contact-value p {
+  font-size: 13px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+  margin: 4px 0 0;
+  user-select: text;
+}
+.developer-contact .icon-btn {
+  flex-shrink: 0;
+}
+.developer-section-heading {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+.developer-section-heading h2 {
+  font-size: 17px;
+  margin: 0;
+}
+.developer-section-heading span {
+  color: var(--muted);
+  font-size: 12px;
+}
+.developer-socials {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+.developer-social-card {
+  padding: 20px;
+  min-width: 0;
+  border: 1px solid var(--border);
+  border-radius: 23px;
+  background: var(--panel);
+}
+.developer-social-card h3 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 18px;
+  font-size: 15px;
+}
+.developer-social-icon {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 11px;
+  color: white;
+  background: #087af5;
+}
+.developer-social-icon.zalo {
+  font-size: 23px;
+  font-weight: 750;
+}
+.developer-social-icon.instagram {
+  background: linear-gradient(135deg, #7440cb, #db3688 55%, #ed9545);
+}
+.developer-social-icon.messenger {
+  background: linear-gradient(135deg, #117bfa, #8c42df);
+}
+.developer-qr-button {
+  display: block;
+  width: 100%;
+  max-width: 256px;
+  padding: 0;
+  margin: 0 auto;
+  background: white;
+  border: 0;
+  border-radius: 16px;
+  cursor: zoom-in;
+}
+.developer-qr {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  border-radius: 16px;
+  background: white;
+}
+.developer-social-handle {
+  font-size: 12px;
+  color: var(--muted);
+  text-align: center;
+  margin: 15px 0;
+  overflow-wrap: anywhere;
+  user-select: text;
+}
+.developer-social-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.developer-social-actions .btn {
+  padding: 10px 15px;
+  font-size: 12px;
+}
+.developer-qr-dialog {
+  width: min(460px, calc(100vw - 48px));
+  max-height: calc(100vh - 40px);
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 26px;
+  background: var(--panel);
+  color: var(--text);
+  box-shadow: 0 24px 80px #0005;
+}
+.developer-qr-dialog::backdrop {
+  background: #0008;
+  backdrop-filter: blur(7px);
+}
+.developer-qr-dialog-content {
+  padding: 24px;
+  text-align: center;
+}
+.developer-qr-dialog header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+.developer-qr-dialog h2 {
+  font-size: 20px;
+  margin: 0;
+}
+.developer-qr-dialog h3 {
+  margin: 20px 0 0;
+  font-size: 18px;
+}
+.developer-qr-dialog .developer-social-handle {
+  margin-top: 6px;
+}
+@media (max-width: 1050px) {
+  .developer-contact {
+    gap: 9px;
+    padding: 14px;
+  }
+  .developer-contact > svg {
+    display: none;
+  }
+  .developer-socials {
+    gap: 12px;
+  }
+  .developer-social-card {
+    padding: 15px;
+  }
+  .developer-social-actions {
+    gap: 3px;
+  }
+  .developer-social-actions .btn {
+    padding: 9px 11px;
+    font-size: 11px;
+  }
+}
 .about-logo {
   width: 75px;
   height: 75px;

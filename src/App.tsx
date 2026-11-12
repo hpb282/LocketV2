@@ -2,6 +2,7 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type CSSProperties,
 } from "react";
@@ -33,6 +34,7 @@ import {
   Download,
   Palette,
   CalendarDays,
+  Code2,
 } from "lucide-react";
 import { invoke, mediaURL, snapshot, formatDuration } from "./api";
 import {
@@ -53,6 +55,7 @@ import { Avatar } from "./Avatar";
 import { Profile } from "./Profile";
 import { Memories } from "./Memories";
 import { localDayKey } from "./calendar";
+import { Developer } from "./Developer";
 
 type Page =
   | "camera"
@@ -62,6 +65,7 @@ type Page =
   | "favorites"
   | "trash"
   | "settings"
+  | "developer"
   | "updates";
 function useTheme(settings: Settings) {
   useEffect(() => {
@@ -163,11 +167,12 @@ function Widget() {
   );
 }
 function MainApp() {
+  const workspace = useRef<HTMLElement>(null);
   const [data, setData] = useState<Snapshot>({
       items: [],
       settings: defaultSettings,
       profile: defaultProfile,
-      version: "0.3.0",
+      version: "0.4.0",
       desktop: true,
     }),
     [page, setPage] = useState<Page>("camera"),
@@ -205,6 +210,9 @@ function MainApp() {
     return () => clearTimeout(timer);
   }, [toast]);
   useTheme(data.settings);
+  useEffect(() => {
+    workspace.current?.scrollTo({ top: 0, left: 0 });
+  }, [page]);
   const run = async (fn: () => Promise<unknown>) => {
     try {
       await fn();
@@ -342,7 +350,7 @@ function MainApp() {
             <small>Cập nhật</small>
           </button>
           <button
-            className={`nav-button ${page === "settings" ? "active" : ""}`}
+            className={`nav-button ${page === "settings" || page === "developer" ? "active" : ""}`}
             aria-label="Cài đặt"
             title="Cài đặt"
             onClick={() => navigate("settings")}
@@ -351,7 +359,7 @@ function MainApp() {
           </button>
         </div>
       </aside>
-      <main className="workspace">
+      <main className="workspace" ref={workspace}>
         {!data.desktop && (
           <div className="preview-banner">
             Bản xem giao diện · Hãy chạy npm run dev để mở app desktop đầy đủ.
@@ -548,16 +556,31 @@ function MainApp() {
                     <span className="version-badge">v{data.version}</span>
                   </h3>
                   <p>Nhật ký ảnh & video cá nhân · Lưu trên máy của bạn.</p>
-                  <button
-                    className="text-button"
-                    onClick={() => navigate("updates")}
-                  >
-                    Kiểm tra cập nhật <ChevronRight size={16} />
-                  </button>
+                  <div className="about-links">
+                    <button
+                      className="text-button"
+                      onClick={() => navigate("developer")}
+                    >
+                      <Code2 size={17} /> Người phát triển
+                      <ChevronRight size={16} />
+                    </button>
+                    <button
+                      className="text-button"
+                      onClick={() => navigate("updates")}
+                    >
+                      Kiểm tra cập nhật <ChevronRight size={16} />
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
           </section>
+        ) : page === "developer" ? (
+          <Developer
+            version={data.version}
+            notify={notify}
+            onBack={() => navigate("settings")}
+          />
         ) : page === "profile" ? (
           <Profile profile={data.profile} items={active} notify={notify} />
         ) : page === "updates" ? (

@@ -1,6 +1,6 @@
 {
   "name": "locket-x-hpb",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "description": "Locket x HPB — nhật ký ảnh và video cá nhân trên laptop",
   "author": "hpb282",
@@ -18,7 +18,8 @@
     "start": "electron .",
     "test": "node --test tests/*.test.cjs",
     "test:ui": "playwright test",
-    "dist:win": "npm run build && electron-builder --win nsis --publish never"
+    "dist:win": "npm run build && electron-builder --win nsis --publish never",
+    "qr:developer": "node scripts/generate-developer-qr.mjs"
   },
   "dependencies": {
     "electron-updater": "6.8.11",
@@ -35,6 +36,8 @@
     "@vitejs/plugin-react": "6.3.0",
     "electron": "45.3.0",
     "electron-builder": "26.18.0",
+    "jsqr": "1.4.0",
+    "qrcode": "1.5.4",
     "typescript": "7.0.2",
     "vite": "8.3.8"
   },

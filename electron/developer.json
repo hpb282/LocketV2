@@ -1,0 +1,26 @@
+{
+  "name": "Hồ Phương Bắc",
+  "alias": "hpb",
+  "email": "hophuongbac281@gmail.com",
+  "phone": "0349557930",
+  "socials": [
+    {
+      "id": "zalo",
+      "label": "Zalo",
+      "handle": "0349557930",
+      "url": "https://zalo.me/0349557930"
+    },
+    {
+      "id": "instagram",
+      "label": "Instagram",
+      "handle": "@_hpb06",
+      "url": "https://www.instagram.com/_hpb06/"
+    },
+    {
+      "id": "messenger",
+      "label": "Messenger",
+      "handle": "@ho.phuong.bac.836428",
+      "url": "https://m.me/ho.phuong.bac.836428"
+    }
+  ]
+}

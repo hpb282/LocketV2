@@ -9,7 +9,7 @@ export async function invoke<T = any>(
       items: [],
       settings: defaultSettings,
       profile: defaultProfile,
-      version: "0.3.0",
+      version: "0.4.0",
       desktop: false,
     } as T;
   throw Error("Hãy mở bản desktop Locket x HPB để dùng chức năng này.");
