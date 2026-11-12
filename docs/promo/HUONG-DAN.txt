@@ -1,0 +1,19 @@
+BỘ ẢNH GIỚI THIỆU — LOCKET x HPB
+
+Có 6 ảnh PNG, kích thước 1080 × 1350 px (tỷ lệ 4:5).
+Đăng theo thứ tự 01 → 06 thành một bài nhiều ảnh.
+Giữ nguyên tỷ lệ để không cắt tiêu đề hoặc QR tải app.
+Không cần đăng ảnh xem trước cùng với 6 ảnh chính.
+
+QR ở ảnh 06 dẫn tới bản phát hành mới nhất:
+https://github.com/hpb282/LocketV2/releases/latest
+
+CAPTION.md có bài giới thiệu dài, ngắn và danh sách nội dung từng ảnh.
+NGUON-ANH.txt ghi nguồn ảnh minh hoạ.
+
+Ảnh bìa là minh hoạ được thiết kế bằng AI dựa trên icon của dự án.
+Các màn hình ở ảnh 02–06 được chụp từ app Electron v0.4.0 thật,
+sử dụng thư viện minh hoạ riêng, không phải thư viện cá nhân của người dùng.
+Cảnh quay minh hoạ dùng nguồn webcam giả lập để chụp giao diện quay 10 giây.
+
+Ngày tạo: 12/11/2026.

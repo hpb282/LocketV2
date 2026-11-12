@@ -1,0 +1,18 @@
+NGUỒN NỘI DUNG
+
+Icon: icon hiện có của dự án Locket x HPB.
+Ảnh bìa: hình minh hoạ AI được tạo cho bộ ảnh này.
+Ảnh giao diện: app Electron Locket x HPB v0.4.0, thư viện demo cô lập.
+QR: tạo trực tiếp từ https://github.com/hpb282/LocketV2/releases/latest.
+
+Ảnh demo trong giao diện lấy từ Unsplash:
+https://images.unsplash.com/photo-1509042239860-f550ce710b93
+https://images.unsplash.com/photo-1490750967868-88aa4486c946
+https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba
+https://images.unsplash.com/photo-1464822759023-fed622ff2c3b
+https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b
+https://images.unsplash.com/photo-1497215728101-856f4ea42174
+
+Giấy phép ảnh Unsplash: https://unsplash.com/license
+Font dùng để xuất ảnh: Noto Sans, SIL Open Font License.
+Font chỉ được raster hoá trong ảnh PNG, không phân phối tệp font trong gói này.
