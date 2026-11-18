@@ -1,12 +1,7 @@
 import type { PaletteId } from "./palettes";
 
 export type Frame =
-  | "none"
-  | "halloween"
-  | "christmas"
-  | "tet"
-  | "birthday"
-  | "polaroid";
+  "none" | "halloween" | "christmas" | "tet" | "birthday" | "polaroid";
 export type TextStyle = {
   frame: Frame;
   thickness: number;
@@ -15,6 +10,11 @@ export type TextStyle = {
   color: string;
   fontSize: number;
   background: boolean;
+};
+export type StudioWork = {
+  dirty: boolean;
+  requesting: boolean;
+  saving: boolean;
 };
 export type Item = {
   id: string;

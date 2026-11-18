@@ -1,4 +1,5 @@
 node_modules/
+public/vision/
 dist/
 release/
 data/

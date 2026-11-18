@@ -54,7 +54,7 @@ export function Capture({
 }: {
   settings: Settings;
   recent: Item[];
-  onSaved: (id: string) => void;
+  onSaved: (id: string, openStudio?: boolean) => void;
   notify: (message: string) => void;
   onSettings: (patch: Partial<Settings>) => void;
   initialDraft: Draft | null;
@@ -301,7 +301,11 @@ export function Capture({
           setDraft(null);
         }}
         notify={notify}
-        onSave={async (caption: string, style: TextStyle) => {
+        onSave={async (
+          caption: string,
+          style: TextStyle,
+          openStudio = false,
+        ) => {
           const item = await invoke<Item>("media:add", {
             kind: draft.kind,
             mime: draft.blob.type,
@@ -312,7 +316,7 @@ export function Capture({
             style,
             bytes: new Uint8Array(await draft.blob.arrayBuffer()),
           });
-          onSaved(item.id);
+          onSaved(item.id, openStudio);
         }}
       />
     );

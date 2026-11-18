@@ -16,6 +16,7 @@ const { pathToFileURL } = require("node:url");
 const { Library } = require("./library.cjs");
 const { createUpdateService } = require("./updater.cjs");
 const { developerContact } = require("./developer.cjs");
+const { createAIService } = require("./ai.cjs");
 const { autoUpdater } = require("electron-updater");
 protocol.registerSchemesAsPrivileged([
   {
@@ -44,6 +45,9 @@ let library,
   widgetId = null,
   updates;
 const allowed = new Set();
+const ai = createAIService({ request: (...args) => net.fetch(...args) });
+// Cancel also invalidates image preparation before a network request exists.
+let aiEpoch = 0;
 if (!app.requestSingleInstanceLock()) {
   app.quit();
 } else {
@@ -130,6 +134,71 @@ if (!app.requestSingleInstanceLock()) {
           version: app.getVersion(),
           desktop: true,
         };
+      case "ai:state":
+        return ai.state();
+      case "ai:key": {
+        const state = ai.setKey(payload);
+        aiEpoch++;
+        return state;
+      }
+      case "ai:forget":
+        aiEpoch++;
+        return ai.clearKey();
+      case "ai:cancel":
+        aiEpoch++;
+        return ai.cancel();
+      case "ai:pricing":
+        await shell.openExternal(
+          "https://developers.openai.com/api/docs/pricing",
+        );
+        return true;
+      case "ai:keys":
+        await shell.openExternal("https://platform.openai.com/api-keys");
+        return true;
+      case "ai:generate": {
+        const epoch = aiEpoch;
+        const data = payloadObject(payload);
+        const item = library.item(data.id);
+        if (item.kind !== "image" || item.deletedAt)
+          throw Error("Hãy chọn ảnh đang có trong thư viện để tạo AI.");
+        let bytes = await fs.readFile(library.mediaPath(item.id));
+        let mime = item.mime;
+        const source = nativeImage.createFromBuffer(bytes);
+        if (source.isEmpty()) throw Error("Không đọc được ảnh gốc.");
+        const size = source.getSize();
+        if (
+          bytes.length > 12 * 1024 * 1024 ||
+          Math.max(size.width, size.height) > 2048
+        ) {
+          const scale = Math.min(1, 2048 / Math.max(size.width, size.height));
+          bytes = source
+            .resize({
+              width: Math.round(size.width * scale),
+              height: Math.round(size.height * scale),
+              quality: "best",
+            })
+            .toJPEG(95);
+          mime = "image/jpeg";
+        }
+        if (epoch !== aiEpoch) throw Error("Đã dừng chuẩn bị tạo ảnh.");
+        const result = await ai.generate({
+          bytes,
+          mime,
+          style: data.style,
+          mode: data.mode,
+        });
+        const image = nativeImage.createFromBuffer(result);
+        if (image.isEmpty())
+          throw Error("Dịch vụ AI chưa trả về ảnh đọc được.");
+        const dimensions = image.getSize();
+        if (dimensions.width * dimensions.height > 24_000_000)
+          throw Error("Ảnh AI vượt quá kích thước hỗ trợ.");
+        return {
+          bytes: new Uint8Array(result),
+          width: dimensions.width,
+          height: dimensions.height,
+        };
+      }
       case "developer:copy":
         clipboard.writeText(developerContact(payload).text);
         return true;
@@ -364,7 +433,7 @@ if (!app.requestSingleInstanceLock()) {
       library = await new Library(
         path.join(app.getPath("userData"), "library"),
       ).open();
-      protocol.handle("locket", (request) => {
+      protocol.handle("locket", async (request) => {
         const url = new URL(request.url);
         const name =
           url.pathname === "/"
@@ -372,12 +441,26 @@ if (!app.requestSingleInstanceLock()) {
             : decodeURIComponent(url.pathname).slice(1);
         if (
           url.host !== "app" ||
-          !/^(index\.html|icon\.(svg|png)|assets\/[a-zA-Z0-9_.-]+)$/.test(name)
+          !/^(index\.html|icon\.(svg|png)|assets\/[a-zA-Z0-9_.-]+|vision\/(face_landmarker\.task|vision_wasm_module_internal\.(js|wasm)|NOTICE\.txt|LICENSE\.txt))$/.test(
+            name,
+          )
         )
           return new Response("Not found", { status: 404 });
-        return net.fetch(
+        const response = await net.fetch(
           pathToFileURL(path.join(__dirname, "..", "dist", name)).toString(),
         );
+        if (/^assets\/face\.worker-.*\.js$/.test(name)) {
+          const headers = new Headers(response.headers);
+          headers.set(
+            "Content-Security-Policy",
+            "default-src 'none'; script-src 'self' 'wasm-unsafe-eval'; connect-src 'self'",
+          );
+          return new Response(response.body, {
+            headers,
+            status: response.status,
+          });
+        }
+        return response;
       });
       protocol.handle("media", async (request) => {
         try {
@@ -471,6 +554,8 @@ if (!app.requestSingleInstanceLock()) {
       });
       mainWindow = createWindow();
       mainWindow.on("closed", () => {
+        aiEpoch++;
+        ai.clearKey();
         widget?.close();
         mainWindow = null;
       });

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import {
   ArrowLeft,
   SlidersHorizontal,
@@ -11,13 +11,15 @@ import {
   Pencil,
   ChevronLeft,
   ChevronRight,
+  Sparkles,
 } from "lucide-react";
-import type { Draft, Item, TextStyle } from "./types";
+import type { Draft, Item, StudioWork, TextStyle } from "./types";
 import { defaultStyle } from "./types";
 import { MediaSurface } from "./MediaSurface";
 import { Tools } from "./Tools";
 import { drawOverlay } from "./frames";
 import { invoke, mediaURL } from "./api";
+const PhotoStudio = lazy(() => import("./PhotoStudio"));
 export function Review({
   item,
   draft,
@@ -28,16 +30,26 @@ export function Review({
   onTrash,
   onStep,
   notify,
+  openStudio = false,
+  onStudioCreated,
+  onStudioWorkChange,
 }: {
   item?: Item;
   draft?: Draft;
-  onSave: (caption: string, style: TextStyle) => Promise<void>;
+  onSave: (
+    caption: string,
+    style: TextStyle,
+    openStudio?: boolean,
+  ) => Promise<void>;
   onBack: () => void;
   onRetake?: () => void;
   onFavorite?: () => void;
   onTrash?: () => void;
   onStep?: (delta: number) => void;
   notify: (message: string) => void;
+  openStudio?: boolean;
+  onStudioCreated?: (id: string) => Promise<void>;
+  onStudioWorkChange?: (work: StudioWork) => void;
 }) {
   const media = draft ?? item!;
   const src = draft?.url ?? mediaURL(item!.id);
@@ -45,7 +57,8 @@ export function Review({
     [style, setStyle] = useState<TextStyle>(item?.style ?? { ...defaultStyle });
   const [tools, setTools] = useState(false),
     [editing, setEditing] = useState(false),
-    [busy, setBusy] = useState(false);
+    [busy, setBusy] = useState(false),
+    [studio, setStudio] = useState(openStudio);
   const edit = useRef<HTMLTextAreaElement>(null);
   useEffect(() => {
     setCaption(item?.caption ?? "");
@@ -105,7 +118,7 @@ export function Review({
       notify("Đã xuất ảnh kèm ghi chú và khung viền.");
   };
   useEffect(() => {
-    if (!onStep) return;
+    if (!onStep || studio) return;
     const handler = (event: KeyboardEvent) => {
       if ((event.target as HTMLElement).closest("input,textarea")) return;
       if (event.key === "ArrowLeft") leave(() => onStep(-1));
@@ -115,6 +128,27 @@ export function Review({
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   });
+  if (studio && item && onStudioCreated)
+    return (
+      <Suspense
+        fallback={
+          <div className="loading">
+            <Sparkles size={32} />
+            <p>Đang mở AI & Sticker…</p>
+          </div>
+        }
+      >
+        <PhotoStudio
+          item={item}
+          caption={caption}
+          style={style}
+          notify={notify}
+          onClose={() => setStudio(false)}
+          onCreated={onStudioCreated}
+          onWorkChange={onStudioWorkChange}
+        />
+      </Suspense>
+    );
   return (
     <section className="page review-page">
       <header className="page-header">
@@ -144,13 +178,30 @@ export function Review({
             )}
           </div>
         </div>
-        <button
-          className={`btn ${tools ? "primary" : "secondary"}`}
-          onClick={() => setTools(!tools)}
-        >
-          <SlidersHorizontal size={18} />
-          Công cụ
-        </button>
+        <div className="header-actions">
+          {media.kind === "image" && (
+            <button
+              className="btn secondary"
+              disabled={busy}
+              onClick={() =>
+                void action(async () => {
+                  if (item) setStudio(true);
+                  else await onSave(caption, style, true);
+                })
+              }
+            >
+              <Sparkles size={17} />
+              AI & Sticker
+            </button>
+          )}
+          <button
+            className={`btn ${tools ? "primary" : "secondary"}`}
+            onClick={() => setTools(!tools)}
+          >
+            <SlidersHorizontal size={18} />
+            Công cụ
+          </button>
+        </div>
       </header>
       <div className={`editor-layout ${tools ? "expanded" : ""}`}>
         <div className="editor-main">

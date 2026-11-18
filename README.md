@@ -1,6 +1,6 @@
 # Locket x HPB
 
-Ứng dụng desktop cá nhân để giữ ảnh, video và những ghi chú nhỏ. Chạy offline, lưu dữ liệu trên laptop, giao diện gọn với các màu nền neon và chế độ sáng/tối. Một dự án độc lập, không kết nối với Locket chính thức.
+Ứng dụng desktop cá nhân để giữ ảnh, video và những ghi chú nhỏ. Lưu dữ liệu trên laptop, giao diện gọn với các màu nền neon và chế độ sáng/tối. Chụp, lưu và sticker dùng offline; tạo ảnh hoạt hình bằng AI là tùy chọn online. Một dự án độc lập, không kết nối với Locket chính thức.
 
 ## Cài trên Windows
 
@@ -19,6 +19,8 @@ Bản cài dành cho Windows 10/11 x64. Repo hiện công khai, bạn bè có th
 - Ghi chú bo tròn ở mép dưới ảnh/video, sửa sau khi lưu.
 - Khung Halloween, Giáng sinh, Tết, sinh nhật, Polaroid; hiệu ứng chữ, màu và cỡ chữ.
 - Bảng công cụ trang trí bên phải có thể mở rộng/thu gọn.
+- **AI & Sticker:** kính, mũ, vương miện, tai mèo, mèo, cún và lấp lánh; tự đặt theo khuôn mặt ngay trên máy, kéo/đổi cỡ/xoay, so sánh ảnh gốc và lưu bản mới.
+- **Ảnh AI:** Anime, Chibi, Truyện tranh, Hoạt hình 3D; hai chế độ Đẹp & nhanh / Ưu tiên chi tiết. Dùng API key OpenAI riêng, cần Internet và tài khoản API có quyền tạo ảnh. API tính phí riêng; app chỉ gửi ảnh khi bấm **Tạo ảnh AI**.
 - Lưới ảnh/video, tìm ghi chú, lọc loại/tháng, yêu thích, chỉnh kích thước lưới.
 - **Kỷ niệm:** lịch theo tháng/ngày với ảnh đại diện từng ngày và số lượng ảnh/video; bấm ngày để xem lại.
 - **Hồ sơ cá nhân:** bấm avatar ở đầu thanh bên trái để sửa tên, biệt danh, ngày sinh, giới thiệu, thành phố và đổi ảnh đại diện.
@@ -46,7 +48,7 @@ npm run dev
 `npm run dev` mở app Electron và giao diện phát triển. Electron có thể tải binary lần đầu khởi chạy. `npm run dev:web` chỉ để xem giao diện trong trình duyệt; chức năng lưu file/native cần bản Electron.
 
 ```bash
-npm test         # kiểm thử lưu trữ và cập nhật
+npm test         # kiểm thử lưu trữ, cập nhật, AI và hình học sticker
 npm run build    # kiểm tra TypeScript và build giao diện
 npm run test:ui  # kiểm thử app desktop với webcam giả lập
 npm run dist:win # tạo bộ cài Windows trong release/ (chạy trên Windows)
@@ -58,6 +60,8 @@ Nút **Cập nhật** nằm ở thanh bên trái, đồng thời có trong **Cà
 
 Xem [hướng dẫn phát triển, dữ liệu và phát hành](docs/development.md) để thêm tính năng và tạo bản cập nhật bằng tag phiên bản. Hosting và đồng bộ đám mây được dành cho giai đoạn sau.
 
+Xem [cách dùng AI & Sticker](docs/ai-stickers.md) để thiết lập AI, tìm hiểu phí API và cách ảnh được xử lý. Không cần máy chủ riêng. Bộ cài không chứa API key dùng chung; mỗi người tự thiết lập khóa của mình trong app.
+
 Bản **0.2.0** bỏ phần chữ giới thiệu trên màn hình chụp, thêm các màu nền neon nhẹ và giữ nguyên thư viện của bản 0.1.0 khi cập nhật.
 
 Bản **0.3.0** thêm lịch Kỷ niệm và hồ sơ cá nhân, thay nút HPB trong thanh bên bằng avatar có thể đổi. Hồ sơ được lưu riêng trong thư viện cục bộ; avatar không được tính là ảnh chụp và không xuất hiện trong lịch.
@@ -65,3 +69,5 @@ Bản **0.3.0** thêm lịch Kỷ niệm và hồ sơ cá nhân, thay nút HPB t
 Bản **0.4.0** thêm mục Người phát triển với các thông tin liên hệ và ba QR được tạo từ liên kết liên hệ. QR có sẵn trong app, xem được khi offline; mở liên kết cần kết nối Internet. Thông tin người phát triển tách riêng khỏi hồ sơ của người dùng.
 
 Bản **0.5.0** phủ màu toàn bộ cửa sổ, đồng bộ nền thanh bên và ảnh ghim; thêm hai dải neon chạy chậm quanh camera và khung xem lại. Cả 7 màu đều hỗ trợ sáng/tối, giữ lựa chọn màu và thư viện sau cập nhật.
+
+Bản **0.6.0** thêm AI & Sticker. Nhận diện vị trí khuôn mặt chạy offline trong worker, chỉ tải khi cần; ảnh hoạt hình dùng OpenAI theo yêu cầu. Giữ ảnh gốc, ghi chú và khung viền; lưu ảnh chỉnh thành một khoảnh khắc mới.

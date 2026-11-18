@@ -4,6 +4,9 @@
 
 - `src/Capture.tsx`: vòng đời webcam, hẹn giờ, MediaRecorder, giới hạn 10 giây.
 - `src/Review.tsx`, `src/Tools.tsx`: xem lại, ghi chú và công cụ trang trí.
+- `src/PhotoStudio.tsx`, `src/stickers.ts`: trình AI & Sticker tải khi mở; vị trí sticker theo tọa độ tương đối, Canvas xuất PNG ở kích thước ảnh hiện có. Ghi chú/khung vẫn lưu riêng, không ghép hai lần.
+- `src/face.ts`, `src/face.worker.ts`: MediaPipe Face Landmarker trên CPU trong module worker. Ảnh nhận diện cạnh dài tối đa 960 px, kết quả cache theo ảnh; worker kết thúc sau mỗi lần nhận diện để trả bộ nhớ. Không tải SDK/mô hình khi chỉ chụp hoặc xem thư viện.
+- `build/vision/`, `scripts/prepare-vision.mjs`: mô hình có checksum cố định và giấy phép; lifecycle `predev`/`prebuild` sao chép mô hình và WASM từ dependency đã pin vào `public/vision/`. Thư mục sinh ra này được bỏ qua trong Git, đóng gói qua `dist/vision/`; app không tải mô hình từ CDN khi sử dụng.
 - `src/frames.ts`: renderer Canvas dùng chung khi xem và khi xuất ảnh.
 - `src/palettes.ts`: danh sách màu nền neon và màu xem trước; CSS variables trong `styles.css` áp dụng theo `data-palette` trên cả cửa sổ chính lẫn cửa sổ ghim. Từ 0.5.0, `--canvas` phủ toàn bộ nền, thanh bên dùng bề mặt trong mờ, hai pseudo-element của `.neon-frame` tạo viền conic có mặt nạ rỗng để không phủ camera/ảnh. `prefers-reduced-motion` dừng chuyển động, giữ viền sáng tĩnh.
 - `src/Memories.tsx`, `src/calendar.ts`: lịch kỷ niệm và gom ngày theo múi giờ của laptop, bỏ qua khoảnh khắc trong thùng rác.
@@ -16,8 +19,9 @@
 - `electron/library.cjs`: lưu trữ, ghi nguyên tử, bản sao chỉ mục, phiên bản schema.
 - `electron/main.cjs`: cửa sổ native, IPC giới hạn, hộp chọn/lưu file, giao thức media có hỗ trợ Range cho video.
 - `electron/updater.cjs`: trạng thái kiểm tra/tải/cài bản mới; có thể kiểm thử độc lập.
+- `electron/ai.cjs`: API key chỉ nằm trong bộ nhớ tiến trình chính, endpoint OpenAI cố định, allowlist phong cách/mô hình, một yêu cầu mỗi lần, timeout và giới hạn dữ liệu trả về. Không tự retry yêu cầu tính phí.
 
-Ứng dụng dùng Electron + React + TypeScript + Vite. Không có máy chủ, tài khoản trực tuyến hoặc kết nối với dịch vụ Locket. Chỉ chức năng cập nhật kết nối GitHub khi người dùng chủ động bấm.
+Ứng dụng dùng Electron + React + TypeScript + Vite. Không có máy chủ riêng, tài khoản app trực tuyến hoặc kết nối với dịch vụ Locket. Cập nhật kết nối GitHub khi chủ động bấm. Từ 0.6.0, tạo ảnh AI kết nối OpenAI khi bấm tạo, dùng khóa riêng của người dùng; nhận diện sticker vẫn offline. Xem [AI & Sticker](ai-stickers.md) và [giấy phép thành phần](third-party.md).
 
 ## Thêm tính năng
 

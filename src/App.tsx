@@ -44,6 +44,7 @@ import {
   type Item,
   type Settings,
   type Snapshot,
+  type StudioWork,
   type TextStyle,
 } from "./types";
 import { Capture, imageDraft } from "./Capture";
@@ -172,11 +173,17 @@ function MainApp() {
       items: [],
       settings: defaultSettings,
       profile: defaultProfile,
-      version: "0.5.0",
+      version: "0.6.0",
       desktop: true,
     }),
     [page, setPage] = useState<Page>("camera"),
     [selected, setSelected] = useState<string | null>(null),
+    [studioOnOpen, setStudioOnOpen] = useState(false),
+    [studioWork, setStudioWork] = useState<StudioWork>({
+      dirty: false,
+      requesting: false,
+      saving: false,
+    }),
     [memoryDay, setMemoryDay] = useState<string | null>(null),
     [search, setSearch] = useState(""),
     [kind, setKind] = useState("all"),
@@ -227,6 +234,21 @@ function MainApp() {
     });
   };
   const navigate = (value: Page) => {
+    if (studioWork.saving) {
+      notify("Đang lưu bản mới. Bạn chờ một chút nhé.");
+      return false;
+    }
+    if (
+      (studioWork.dirty || studioWork.requesting) &&
+      !window.confirm(
+        studioWork.requesting
+          ? "Rời trình chỉnh sửa và dừng chờ AI? Yêu cầu đã gửi vẫn có thể được tính phí."
+          : "Bản chỉnh chưa được lưu. Rời trình chỉnh sửa?",
+      )
+    )
+      return false;
+    setStudioWork({ dirty: false, requesting: false, saving: false });
+    setStudioOnOpen(false);
     setPage(value);
     setSelected(null);
     setSelection([]);
@@ -234,11 +256,15 @@ function MainApp() {
     setSearch("");
     setKind("all");
     setMonth(false);
+    return true;
   };
   const active = data.items.filter((item) => !item.deletedAt),
     trashed = data.items.filter((item) => item.deletedAt),
     favorites = active.filter((item) => item.favorite);
   const selectedItem = active.find((item) => item.id === selected);
+  useEffect(() => {
+    if (selectedItem && studioOnOpen) setStudioOnOpen(false);
+  }, [selectedItem?.id, studioOnOpen]);
   const filtered = useMemo(() => {
     const base =
       page === "trash" ? trashed : page === "favorites" ? favorites : active;
@@ -259,8 +285,7 @@ function MainApp() {
       const url = await invoke<string | null>("media:import");
       if (!url) return;
       const draft = await imageDraft(url);
-      navigate("camera");
-      setInitialDraft(draft);
+      if (navigate("camera")) setInitialDraft(draft);
     });
   const favorite = (item: Item) =>
     run(async () => {
@@ -382,10 +407,11 @@ function MainApp() {
               setPage("gallery");
               setSelected(id);
             }}
-            onSaved={(id) => {
+            onSaved={(id, openStudio = false) => {
               void refresh();
               setPage("gallery");
               setSelected(id);
+              setStudioOnOpen(openStudio);
               notify("Đã lưu khoảnh khắc trên máy.");
             }}
           />
@@ -590,6 +616,14 @@ function MainApp() {
           <Review
             key={selectedItem.id}
             item={selectedItem}
+            openStudio={studioOnOpen}
+            onStudioWorkChange={setStudioWork}
+            onStudioCreated={async (id) => {
+              setStudioOnOpen(false);
+              await refresh();
+              setSelected(id);
+              notify("Đã lưu bản mới. Ảnh gốc vẫn ở trong thư viện.");
+            }}
             notify={notify}
             onBack={() => setSelected(null)}
             onStep={step}
